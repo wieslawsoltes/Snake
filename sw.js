@@ -12,7 +12,12 @@ self.addEventListener('fetch',event=>{
   const scope=new URL(self.registration.scope);
   if(!url.pathname.startsWith(scope.pathname))return;
   if(request.mode==='navigate'){
-    event.respondWith(fetch(request).catch(async()=>await caches.match('./index.html')||await caches.match('./')));return;
+    // Keep the HTML and cached module graph in the same installed release.
+    // A new content-versioned worker activates after old clients are closed.
+    event.respondWith((async()=>{
+      const cache=await caches.open(CACHE);
+      return await cache.match('./index.html')||await cache.match('./')||fetch(request);
+    })());return;
   }
   event.respondWith((async()=>{
     const cache=await caches.open(CACHE),match=await cache.match(request,{ignoreSearch:true});

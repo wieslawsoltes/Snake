@@ -32,11 +32,23 @@ await writeFile(resolve(dist,'build-info.json'),JSON.stringify({version:pkg.vers
 const files=[];
 async function fingerprint(dir,prefix=''){
  for(const entry of await readdir(dir,{withFileTypes:true})){
+  if(entry.name.startsWith('.'))continue; // Pages control metadata is not publicly served.
   const path=prefix+entry.name;
   if(entry.isDirectory())await fingerprint(resolve(dir,entry.name),path+'/');
   else{const data=await readFile(resolve(dir,entry.name));files.push({path,bytes:data.length,sha256:createHash('sha256').update(data).digest('hex')});}
  }
 }
 await fingerprint(dist);
+// Version the offline shell by runtime content, not by build time. A changed
+// module graph must change sw.js so installed PWAs can activate a new cache.
+files.sort((a,b)=>a.path.localeCompare(b.path));
+const shellHash=createHash('sha256');
+for(const file of files){
+ if(file.path!=='sw.js'&&file.path!=='build-info.json')shellHash.update(file.path).update('\0').update(file.sha256).update('\0');
+}
+const workerPath=resolve(dist,'sw.js');
+const worker=(await readFile(workerPath,'utf8')).replace('snake3310-shell-v2',`snake3310-shell-v2-${shellHash.digest('hex').slice(0,16)}`);
+await writeFile(workerPath,worker);
+Object.assign(files.find(f=>f.path==='sw.js'),{bytes:Buffer.byteLength(worker),sha256:createHash('sha256').update(worker).digest('hex')});
 await writeFile(resolve(dist,'asset-manifest.json'),JSON.stringify({version:pkg.version,source_commit:commit,files},null,2)+'\n');
 console.log(`Built deployable dist/ and standalone snake-3310.html (${(Buffer.byteLength(html)/1024).toFixed(1)} KiB)`);
