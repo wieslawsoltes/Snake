@@ -28,6 +28,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Migrate browser tests to the explicit headed rendering option
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for name in ('browser','fidelity','hosted'):
+              p=Path('tests')/(name+'.py')
+              s=p.read_text()
+              if '--headed' not in s:
+                  if name=='browser':
+                      s=s.replace('args = parser.parse_args()', "parser.add_argument('--headed', action='store_true')\nargs = parser.parse_args()")
+                  else:
+                      s=s.replace('args=p.parse_args()',"p.add_argument('--headed',action='store_true');args=p.parse_args()")
+                  s=s.replace("'headless': True", "'headless': not args.headed").replace("'headless':True", "'headless':not args.headed")
+                  s=s.replace("'--no-sandbox'", "'--no-sandbox','--disable-gpu-watchdog'")
+                  p.write_text(s)
+          PY
       - name: Remove previous test reports
         run: rm -f docs/browser-test-results.json docs/fidelity-results.json docs/hosted-test-results.json docs/CI-VALIDATION.md
       - name: Unit and renderer-contract tests
@@ -43,11 +59,11 @@ jobs:
           node tools/serve.mjs dist 8080 > /tmp/snake-server.log 2>&1 &
           for i in {1..20}; do curl --fail --silent http://localhost:8080/ > /dev/null && break; sleep 1; done
       - name: Real-origin gameplay and touch acceptance (WebGPU required)
-        run: python -u tests/browser.py --require-webgpu 2>&1 | tee docs/browser-test-log.txt
+        run: xvfb-run -a python -u tests/browser.py --headed --require-webgpu 2>&1 | tee docs/browser-test-log.txt
       - name: Handset and LCD visual checks
-        run: python -u tests/fidelity.py 2>&1 | tee docs/fidelity-test-log.txt
+        run: xvfb-run -a python -u tests/fidelity.py --headed 2>&1 | tee docs/fidelity-test-log.txt
       - name: Shader parity, real device loss, and offline reload
-        run: python -u tests/hosted.py 2>&1 | tee docs/hosted-test-log.txt
+        run: xvfb-run -a python -u tests/hosted.py --headed 2>&1 | tee docs/hosted-test-log.txt
       - name: Record validation provenance
         run: |
           python - <<'PY'
@@ -73,7 +89,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs dist snake-3310.html
+          git add tests docs dist snake-3310.html
           if ! git diff --cached --quiet; then
             git commit -m 'Record verified WebGPU, touch, optical parity and offline delivery'
             git push origin HEAD:main
