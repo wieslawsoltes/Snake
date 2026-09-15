@@ -1,0 +1,150 @@
+name: Validate and publish Snake
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: snake-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  validate:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      source_commit: ${{ steps.source.outputs.commit }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Import and commit the verified source package
+        id: import
+        run: |
+          if [ -d .source-import ]; then
+            python - <<'PYTHON'
+          from pathlib import Path, PurePosixPath
+          import hashlib, io, tarfile
+          root=Path('.source-import')
+          paths=sorted(root.glob('*.part'))
+          if len(paths)!=8: raise SystemExit('Incomplete source import')
+          data=b''.join(p.read_bytes() for p in paths)
+          if hashlib.sha256(data).hexdigest()!='33f2e5f7c642f862a302b8d6a5f1444ca8f89bf26100773d60e6423f27792e16':
+              raise SystemExit('Source archive integrity mismatch')
+          with tarfile.open(fileobj=io.BytesIO(data),mode='r:xz') as archive:
+              for member in archive.getmembers():
+                  path=PurePosixPath(member.name)
+                  if not member.isfile() or path.is_absolute() or '..' in path.parts or path.parts[0] in {'.git','.github','.source-import'}:
+                      raise SystemExit('Unsafe source archive member')
+              archive.extractall('.',filter='data')
+          PYTHON
+            rm -rf .source-import
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -A
+            git commit -m 'Implement reference-reconstructed 3310 handset and WebGPU reflective LCD'
+            git push origin HEAD:main
+            echo 'imported=true' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Unit and renderer-contract tests
+        run: npm test | tee docs/unit-test-results.txt
+      - name: Build portable and static editions
+        run: npm run build
+      - name: Install browser test dependencies
+        run: |
+          python -m pip install -r requirements-dev.txt
+          python -m playwright install --with-deps chromium
+      - name: Serve the exact deployment build
+        run: |
+          node tools/serve.mjs dist 8080 > /tmp/snake-server.log 2>&1 &
+          for i in {1..20}; do curl --fail --silent http://localhost:8080/ > /dev/null && break; sleep 1; done
+      - name: Real-origin gameplay and touch acceptance (WebGPU required)
+        run: python tests/browser.py --require-webgpu | tee docs/browser-test-log.txt
+      - name: Handset and LCD visual checks
+        run: python tests/fidelity.py | tee docs/fidelity-test-log.txt
+      - name: Shader parity, real device loss, and offline reload
+        run: python tests/hosted.py | tee docs/hosted-test-log.txt
+      - name: Record validation provenance
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, os
+          r=Path('docs')
+          browser=json.loads((r/'browser-test-results.json').read_text())
+          fidelity=json.loads((r/'fidelity-results.json').read_text())
+          hosted=json.loads((r/'hosted-test-results.json').read_text())
+          text='# GitHub Actions validation\n\n'
+          text+='Workflow source: `'+os.environ['GITHUB_SHA']+'`\n\n'
+          text+='Run: https://github.com/'+os.environ['GITHUB_REPOSITORY']+'/actions/runs/'+os.environ['GITHUB_RUN_ID']+'\n\n'
+          text+='Browser acceptance: '+str(sum(x['passed'] for x in browser['results']))+' passed, fixture='+str(browser['fixture_mode'])+'.\n\n'
+          text+='Fidelity checks: '+str(fidelity['passed'])+' passed, fixture='+str(fidelity['fixture'])+'.\n\n'
+          text+='Hosted WebGPU/offline checks: '+str(hosted['passed'])+' passed. Actual WGSL executed through the software SwiftShader adapter; not a hardware benchmark.\n'
+          (r/'CI-VALIDATION.md').write_text(text)
+          PY
+      - name: Commit validated builds and visual evidence
+        if: steps.import.outputs.imported == 'true'
+        run: |
+          git add -A
+          git commit -m 'Record real WebGPU, touch, optical parity and offline validation'
+          git push origin HEAD:main
+      - name: Resolve source commit
+        id: source
+        run: echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Rebuild with final commit provenance and package
+        run: |
+          npm run build
+          python tools/package.py --output /tmp/Snake-3310-Physical-LCD-Full-Source.zip
+      - name: Upload full source package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Snake-3310-Full-Source
+          path: /tmp/Snake-3310-Physical-LCD-Full-Source.zip
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Snake-3310-Validation
+          path: docs/
+      - name: Upload Pages build
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Publish GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.validate.outputs.source_commit }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify deployed commit and every static asset
+        run: node tools/verify-site.mjs '${{ steps.deployment.outputs.page_url }}' '${{ needs.validate.outputs.source_commit }}'
+      - name: Upload live-site verification
+        uses: actions/upload-artifact@v4
+        with:
+          name: Snake-3310-Published-Verification
+          path: docs/published-test-results.json
