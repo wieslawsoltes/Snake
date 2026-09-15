@@ -43,7 +43,7 @@ jobs:
           node tools/serve.mjs dist 8080 > /tmp/snake-server.log 2>&1 &
           for i in {1..20}; do curl --fail --silent http://localhost:8080/ > /dev/null && break; sleep 1; done
       - name: Real-origin gameplay and touch acceptance
-        run: xvfb-run -a python -u tests/browser.py --headed 2>&1 | tee docs/browser-test-log.txt
+        run: xvfb-run -a python -u tests/browser.py --headed --renderer canvas 2>&1 | tee docs/browser-test-log.txt
       - name: Handset and LCD visual checks
         run: xvfb-run -a python -u tests/fidelity.py --headed 2>&1 | tee docs/fidelity-test-log.txt
       - name: Native shader pixel parity, device loss, and offline reload

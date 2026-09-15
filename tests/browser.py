@@ -14,7 +14,10 @@ parser.add_argument('--url', default='http://localhost:8080/')
 parser.add_argument('--browser', default=os.environ.get('CHROMIUM_PATH') or shutil.which('chromium'))
 parser.add_argument('--require-webgpu', action='store_true')
 parser.add_argument('--headed', action='store_true')
+parser.add_argument('--renderer', choices=['auto', 'canvas'], default='auto', help='Select the UI backend; native shader validation runs independently in hosted.py')
 args = parser.parse_args()
+if args.renderer == 'canvas' and args.require_webgpu:
+    parser.error('--renderer=canvas conflicts with --require-webgpu')
 OUT = ROOT / 'docs' / 'screenshots'
 OUT.mkdir(parents=True, exist_ok=True)
 results = []
@@ -45,7 +48,7 @@ def load(page, saved=None):
     else:
         # Each new page is an isolated test run; reloading that page keeps its save.
         page.add_init_script("if(!sessionStorage.getItem('__snake_test_initialized')){localStorage.clear();sessionStorage.setItem('__snake_test_initialized','1');}")
-        page.goto(args.url + ('&' if '?' in args.url else '?') + 'debug&nosw', wait_until='networkidle')
+        page.goto(args.url + ('&' if '?' in args.url else '?') + 'debug&nosw' + ('&renderer=canvas' if args.renderer == 'canvas' else ''), wait_until='networkidle')
     page.wait_for_function('!!window.__snake', timeout=15000)
     page.wait_for_timeout(450)
 
@@ -58,6 +61,9 @@ def check_overflow(page):
 try:
     with sync_playwright() as p:
         launch = {'headless': not args.headed, 'args': ['--no-sandbox','--disable-gpu-watchdog', '--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader', '--enable-features=Vulkan', '--use-angle=vulkan', '--use-vulkan=swiftshader', '--disable-vulkan-surface']}
+        if args.renderer == 'canvas':
+            # UI acceptance is independent of the native WGSL texture-readback gate.
+            launch['args'] = ['--no-sandbox', '--disable-gpu-watchdog']
         if args.browser:
             launch['executable_path'] = args.browser
         browser = p.chromium.launch(**launch)
@@ -65,6 +71,8 @@ try:
         page = desktop.new_page()
         load(page)
         assert inspect(page)['screen'] == 'title'
+        if args.renderer == 'canvas':
+            assert inspect(page)['renderer'] == 'Canvas 2D'
         check_overflow(page)
         passed('Desktop title initializes without overflow', inspect(page)['renderer'])
         if args.require_webgpu:
@@ -235,6 +243,6 @@ except Exception as error:
     results.append({'name':'Browser run failure','passed':False,'detail':str(error)})
     raise
 finally:
-    report={'fixture_mode':args.fixture,'limitations':(['Browser navigation is disabled by host policy. Tests use set_content(), Canvas 2D, and a mocked storage adapter.','Secure-context WebGPU, real-origin persistence, PWA/offline operation, and physical mobile hardware are not exercised by fixture tests.'] if args.fixture else []),'results':results,'uncaught_errors':errors}
+    report={'fixture_mode':args.fixture,'requested_renderer':args.renderer,'limitations':(['Browser navigation is disabled by host policy. Tests use set_content(), Canvas 2D, and a mocked storage adapter.','Secure-context WebGPU, real-origin persistence, PWA/offline operation, and physical mobile hardware are not exercised by fixture tests.'] if args.fixture else []),'results':results,'uncaught_errors':errors}
     (ROOT/'docs'/'browser-test-results.json').write_text(json.dumps(report,indent=2))
     print(f'{sum(r["passed"] for r in results)}/{len(results)} acceptance checks passed')
