@@ -1,5 +1,6 @@
 {
   "fixture_mode": false,
+  "requested_renderer": "canvas",
   "limitations": [],
   "results": [
     {

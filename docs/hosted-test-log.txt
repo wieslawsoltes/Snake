@@ -4,6 +4,6 @@ PASS WebGPU/Canvas optical projection agrees: backlit {'mean_channel_error': 0.0
 PASS WebGPU/Canvas optical projection agrees: darkroom {'mean_channel_error': 0.06825880758807588, 'max_channel_error': 3}
 PASS WebGPU/Canvas optical projection agrees: oblique {'mean_channel_error': 0.07244886436959608, 'max_channel_error': 4}
 PASS Actual GPU device loss replaces the canvas and restores the CPU renderer 
-PASS Versioned service worker installs and controls the hosted application {'names': ['snake3310-shell-v2'], 'count': 17}
+PASS Versioned service worker installs and controls the hosted application {'names': ['snake3310-shell-v2-ebeaa2c56bcae205'], 'count': 17}
 PASS App-shell, module imports and gameplay work after an offline reload 
 8 hosted checks passed

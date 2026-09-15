@@ -1,12 +1,7 @@
 {
   "version": "2.0.0",
-  "source_commit": "a56859756ded87c86fdf5ccec02f5da56fb5cf4c",
+  "source_commit": "2b608aab5c3c07918c0093090da6688930d08cb1",
   "files": [
-    {
-      "path": ".nojekyll",
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
     {
       "path": "assets/handset.svg",
       "bytes": 8977,
@@ -30,7 +25,7 @@
     {
       "path": "build-info.json",
       "bytes": 132,
-      "sha256": "34b09daeccc1e6e614f455063a7613724fbf05b2ea669245ce219996feee8609"
+      "sha256": "61f62dc093c1a7ef24ff15cb61866468947e8389cc31bc873a5e89f7e232c3fc"
     },
     {
       "path": "handset.css",
@@ -99,8 +94,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 1398,
-      "sha256": "2caa87f047e930d0a30ad720924bae4ec24d11fa7804461252866d3eb93d3748"
+      "bytes": 1631,
+      "sha256": "2774b1961a1a28323405fbd2fd8592fc4ebd3f7f4e6bb1687b29c31c281c777b"
     }
   ]
 }
