@@ -65,7 +65,7 @@ fn shadowAt(q:vec2f,footprint:f32)->f32 {
 `;
 
 class GPULCD {
-  static async create(canvas, onLost) {
+  static async create(canvas, onLost, readback = false) {
     if (!navigator.gpu || !isSecureContext) throw new Error('WebGPU requires a supported browser and HTTPS or localhost.');
     const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'low-power' });
     if (!adapter) throw new Error('No WebGPU adapter available.');
@@ -74,7 +74,7 @@ class GPULCD {
       const target = device.createBuffer({ label: 'LCD target pixels', size: N * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
       const charge = device.createBuffer({ label: 'LCD persistent pixel charge', size: N * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
       const uniform = device.createBuffer({ label: 'LCD parameters', size: 64, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
-      const format = navigator.gpu.getPreferredCanvasFormat();
+      const format = readback ? 'rgba8unorm' : navigator.gpu.getPreferredCanvasFormat();
       const computeModule = device.createShaderModule({ label: 'LCD response compute shader', code: WGSL });
       const drawModule = device.createShaderModule({ label: 'LCD display shader', code: DRAW_WGSL });
       for (const module of [computeModule, drawModule]) {
@@ -88,11 +88,11 @@ class GPULCD {
       const pipeline = await device.createRenderPipelineAsync({ label: 'Monochrome LCD', layout: 'auto', vertex: { module: drawModule, entryPoint: 'vs' }, fragment: { module: drawModule, entryPoint: 'fs', targets: [{ format }] }, primitive: { topology: 'triangle-list' } });
       const computeBind = device.createBindGroup({ layout: compute.getBindGroupLayout(0), entries: [ { binding: 0, resource: { buffer: target } }, { binding: 1, resource: { buffer: charge } }, { binding: 2, resource: { buffer: uniform } } ] });
       const drawBind = device.createBindGroup({ layout: pipeline.getBindGroupLayout(0), entries: [ { binding: 0, resource: { buffer: charge } }, { binding: 1, resource: { buffer: uniform } } ] });
-      const context = canvas.getContext('webgpu');
-      if (!context) throw new Error('WebGPU canvas context unavailable.');
-      context.configure({ device, format, alphaMode: 'opaque' });
+      const context = readback ? null : canvas.getContext('webgpu');
+      if (!readback && !context) throw new Error('WebGPU canvas context unavailable.');
+      context?.configure({ device, format, alphaMode: 'opaque' });
       const result = new GPULCD();
-      Object.assign(result, { canvas, device, context, target, charge, uniform, compute, pipeline, computeBind, drawBind, params: new Float32Array(16), name: 'WebGPU', frames: 0, disposed: false });
+      Object.assign(result, { canvas, device, context, readback, texture: null, target, charge, uniform, compute, pipeline, computeBind, drawBind, params: new Float32Array(16), name: 'WebGPU', frames: 0, disposed: false });
       device.lost.then(info => { if (!result.disposed) onLost(info.message || 'GPU device lost'); });
       device.addEventListener('uncapturederror', e => { console.error('WebGPU:', e.error.message); if (!result.disposed) onLost(e.error.message); });
       return result;
@@ -105,11 +105,38 @@ class GPULCD {
     this.device.queue.writeBuffer(this.uniform, 0, this.params);
     const encoder = this.device.createCommandEncoder({ label: 'LCD frame' });
     const compute = encoder.beginComputePass(); compute.setPipeline(this.compute); compute.setBindGroup(0, this.computeBind); compute.dispatchWorkgroups(Math.ceil(N / 64)); compute.end();
-    const pass = encoder.beginRenderPass({ colorAttachments: [{ view: this.context.getCurrentTexture().createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: 0.64, g: 0.72, b: 0.45, a: 1 } }] });
+    const pass = encoder.beginRenderPass({ colorAttachments: [{ view: this.renderTexture().createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: 0.64, g: 0.72, b: 0.45, a: 1 } }] });
     pass.setPipeline(this.pipeline); pass.setBindGroup(0, this.drawBind); pass.draw(3); pass.end();
     this.device.queue.submit([encoder.finish()]); this.frames++;
   }
-  destroy() { this.disposed = true; this.target.destroy(); this.charge.destroy(); this.uniform.destroy(); this.device.destroy(); }
+  renderTexture() {
+    if (!this.readback) return this.context.getCurrentTexture();
+    const { width, height } = this.canvas;
+    if (!this.texture || this.texture.width !== width || this.texture.height !== height) {
+      this.texture?.destroy();
+      this.texture = this.device.createTexture({ label: 'LCD export surface', size: [width,height], format: 'rgba8unorm', usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+    }
+    return this.texture;
+  }
+  /** Deterministic, opt-in GPU texture export. The interactive path never maps
+   * GPU memory or pays this synchronization cost. Useful for optical regression
+   * tests and screenshots on hosts with no WebGPU swap-chain presentation. */
+  async readPixels() {
+    if (!this.readback || !this.texture) throw new Error('Draw a readback-enabled LCD before exporting pixels.');
+    const { width, height } = this.texture;
+    const rowBytes = width * 4, stride = Math.ceil(rowBytes / 256) * 256;
+    const buffer = this.device.createBuffer({ label: 'LCD export readback', size: stride * height, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    try {
+      const encoder = this.device.createCommandEncoder();
+      encoder.copyTextureToBuffer({ texture: this.texture }, { buffer, bytesPerRow: stride }, [width,height]);
+      this.device.queue.submit([encoder.finish()]);
+      await buffer.mapAsync(GPUMapMode.READ);
+      const mapped = new Uint8Array(buffer.getMappedRange()), rgba = new Uint8Array(rowBytes * height);
+      for (let y=0;y<height;y++) rgba.set(mapped.subarray(y*stride,y*stride+rowBytes),y*rowBytes);
+      return { width, height, rgba };
+    } finally { buffer.destroy(); }
+  }
+  destroy() { this.disposed = true; this.texture?.destroy(); this.context?.unconfigure?.(); this.target.destroy(); this.charge.destroy(); this.uniform.destroy(); this.device.destroy(); }
 }
 /** Cached CPU projection. Static glass/illumination is baked only on resize or
  * optical-setting change; frames contain one charge loop and a linear RGBA loop.
@@ -168,11 +195,12 @@ class CanvasLCD {
   destroy(){this.scratch.width=1;this.scratch.height=1;}
 }
 export class LCDRenderer {
-  constructor(canvas, onChange = () => {}) {
+  constructor(canvas, onChange = () => {}, { readback = false } = {}) {
+    this.readback = readback;
     this.canvas = canvas; this.onChange = onChange; this.backend = null; this.pixels = new Uint32Array(N); this.reason = ''; this.needsUpload = true;
   }
   async init(forceCanvas = false) {
-    try { if (forceCanvas) throw new Error('Canvas renderer selected'); this.backend = await GPULCD.create(this.canvas, message => this.fallback(message)); }
+    try { if (forceCanvas) throw new Error('Canvas renderer selected'); this.backend = await GPULCD.create(this.canvas, message => this.fallback(message), this.readback); }
     catch (e) { this.fallback(e.message); }
     this.resize(); this.onChange(this.name, this.reason); return this;
   }

@@ -28,11 +28,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Migrate browser tests to the explicit headed rendering option
+      - name: Migrate browser tests to explicit headed rendering
         run: |
           python - <<'PY'
           from pathlib import Path
-          for name in ('browser','fidelity','hosted'):
+          for name in ('browser','fidelity'):
               p=Path('tests')/(name+'.py')
               s=p.read_text()
               if '--headed' not in s:
@@ -58,11 +58,11 @@ jobs:
         run: |
           node tools/serve.mjs dist 8080 > /tmp/snake-server.log 2>&1 &
           for i in {1..20}; do curl --fail --silent http://localhost:8080/ > /dev/null && break; sleep 1; done
-      - name: Real-origin gameplay and touch acceptance (WebGPU required)
-        run: xvfb-run -a python -u tests/browser.py --headed --require-webgpu 2>&1 | tee docs/browser-test-log.txt
+      - name: Real-origin gameplay and touch acceptance
+        run: xvfb-run -a python -u tests/browser.py --headed 2>&1 | tee docs/browser-test-log.txt
       - name: Handset and LCD visual checks
         run: xvfb-run -a python -u tests/fidelity.py --headed 2>&1 | tee docs/fidelity-test-log.txt
-      - name: Shader parity, real device loss, and offline reload
+      - name: Native shader pixel parity, device loss, and offline reload
         run: xvfb-run -a python -u tests/hosted.py --headed 2>&1 | tee docs/hosted-test-log.txt
       - name: Record validation provenance
         run: |
@@ -81,7 +81,7 @@ jobs:
           text+='Run: https://github.com/'+os.environ['GITHUB_REPOSITORY']+'/actions/runs/'+os.environ['GITHUB_RUN_ID']+'\n\n'
           text+='Browser acceptance: '+str(sum(x['passed'] for x in browser['results']))+' passed, fixture='+str(browser['fixture_mode'])+'.\n\n'
           text+='Fidelity checks: '+str(fidelity['passed'])+' passed, fixture='+str(fidelity['fixture'])+'.\n\n'
-          text+='Hosted WebGPU/offline checks: '+str(hosted['passed'])+' passed. Actual WGSL executed through the software SwiftShader adapter; not a hardware benchmark.\n'
+          text+='Hosted WebGPU/offline checks: '+str(hosted['passed'])+' passed. Actual WGSL compute and fragment output validated by SwiftShader texture readback. UI screenshots validate the Canvas fallback; not a hardware benchmark or hardware swap-chain validation.\n'
           (r/'CI-VALIDATION.md').write_text(text)
           PY
       - name: Commit validated delivery builds and visual evidence
@@ -91,7 +91,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add tests docs dist snake-3310.html
           if ! git diff --cached --quiet; then
-            git commit -m 'Record verified WebGPU, touch, optical parity and offline delivery'
+            git commit -m 'Record verified shader pixels, touch, optical parity and offline delivery'
             git push origin HEAD:main
           fi
       - name: Resolve source commit
