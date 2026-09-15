@@ -11,12 +11,12 @@ struct Params {
 }
 `;
 const WGSL = PARAMS + /* wgsl */`
-@group(0) @binding(0) var<storage, read> target: array<u32>;
+@group(0) @binding(0) var<storage, read> pixelTargets: array<u32>;
 @group(0) @binding(1) var<storage, read_write> charge: array<f32>;
 @group(0) @binding(2) var<uniform> p: Params;
 @compute @workgroup_size(64) fn update(@builtin(global_invocation_id) id: vec3u) {
  let i=id.x; if(i>=4032u){return;}
- let to=f32(target[i]); let tau=select(p.fall,p.rise,to>charge[i]);
+ let to=f32(pixelTargets[i]); let tau=select(p.fall,p.rise,to>charge[i]);
  let amount=select(1.0,1.0-exp(-clamp(p.delta,0.0,.1)/tau),p.ghosting>.5);
  var q=mix(charge[i],to,amount);
  if(q<.0001){q=0.0;} if(q>.9999){q=1.0;} charge[i]=q;

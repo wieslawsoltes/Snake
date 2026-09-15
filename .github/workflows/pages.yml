@@ -6,6 +6,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+defaults:
+  run:
+    shell: bash
 concurrency:
   group: snake-${{ github.ref }}
   cancel-in-progress: false
@@ -25,36 +28,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Import and commit the verified source package
-        id: import
-        run: |
-          if [ -d .source-import ]; then
-            python - <<'PYTHON'
-          from pathlib import Path, PurePosixPath
-          import hashlib, io, tarfile
-          root=Path('.source-import')
-          paths=sorted(root.glob('*.part'))
-          if len(paths)!=8: raise SystemExit('Incomplete source import')
-          data=b''.join(p.read_bytes() for p in paths)
-          if hashlib.sha256(data).hexdigest()!='33f2e5f7c642f862a302b8d6a5f1444ca8f89bf26100773d60e6423f27792e16':
-              raise SystemExit('Source archive integrity mismatch')
-          with tarfile.open(fileobj=io.BytesIO(data),mode='r:xz') as archive:
-              for member in archive.getmembers():
-                  path=PurePosixPath(member.name)
-                  if not member.isfile() or path.is_absolute() or '..' in path.parts or path.parts[0] in {'.git','.github','.source-import'}:
-                      raise SystemExit('Unsafe source archive member')
-              archive.extractall('.',filter='data')
-          PYTHON
-            rm -rf .source-import
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add -A
-            git commit -m 'Implement reference-reconstructed 3310 handset and WebGPU reflective LCD'
-            git push origin HEAD:main
-            echo 'imported=true' >> "$GITHUB_OUTPUT"
-          fi
+      - name: Remove previous test reports
+        run: rm -f docs/browser-test-results.json docs/fidelity-results.json docs/hosted-test-results.json docs/CI-VALIDATION.md
       - name: Unit and renderer-contract tests
-        run: npm test | tee docs/unit-test-results.txt
+        run: npm test 2>&1 | tee docs/unit-test-results.txt
       - name: Build portable and static editions
         run: npm run build
       - name: Install browser test dependencies
@@ -66,11 +43,11 @@ jobs:
           node tools/serve.mjs dist 8080 > /tmp/snake-server.log 2>&1 &
           for i in {1..20}; do curl --fail --silent http://localhost:8080/ > /dev/null && break; sleep 1; done
       - name: Real-origin gameplay and touch acceptance (WebGPU required)
-        run: python tests/browser.py --require-webgpu | tee docs/browser-test-log.txt
+        run: python -u tests/browser.py --require-webgpu 2>&1 | tee docs/browser-test-log.txt
       - name: Handset and LCD visual checks
-        run: python tests/fidelity.py | tee docs/fidelity-test-log.txt
+        run: python -u tests/fidelity.py 2>&1 | tee docs/fidelity-test-log.txt
       - name: Shader parity, real device loss, and offline reload
-        run: python tests/hosted.py | tee docs/hosted-test-log.txt
+        run: python -u tests/hosted.py 2>&1 | tee docs/hosted-test-log.txt
       - name: Record validation provenance
         run: |
           python - <<'PY'
@@ -80,6 +57,9 @@ jobs:
           browser=json.loads((r/'browser-test-results.json').read_text())
           fidelity=json.loads((r/'fidelity-results.json').read_text())
           hosted=json.loads((r/'hosted-test-results.json').read_text())
+          assert browser['fixture_mode'] is False and all(x['passed'] for x in browser['results'])
+          assert fidelity['fixture'] is False and fidelity['passed'] == len(fidelity['results'])
+          assert hosted['real_origin'] is True and hosted['passed'] == len(hosted['results'])
           text='# GitHub Actions validation\n\n'
           text+='Workflow source: `'+os.environ['GITHUB_SHA']+'`\n\n'
           text+='Run: https://github.com/'+os.environ['GITHUB_REPOSITORY']+'/actions/runs/'+os.environ['GITHUB_RUN_ID']+'\n\n'
@@ -88,12 +68,16 @@ jobs:
           text+='Hosted WebGPU/offline checks: '+str(hosted['passed'])+' passed. Actual WGSL executed through the software SwiftShader adapter; not a hardware benchmark.\n'
           (r/'CI-VALIDATION.md').write_text(text)
           PY
-      - name: Commit validated builds and visual evidence
-        if: steps.import.outputs.imported == 'true'
+      - name: Commit validated delivery builds and visual evidence
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
-          git add -A
-          git commit -m 'Record real WebGPU, touch, optical parity and offline validation'
-          git push origin HEAD:main
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs dist snake-3310.html
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record verified WebGPU, touch, optical parity and offline delivery'
+            git push origin HEAD:main
+          fi
       - name: Resolve source commit
         id: source
         run: echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
