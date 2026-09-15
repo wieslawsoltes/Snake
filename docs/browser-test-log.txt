@@ -1,0 +1,22 @@
+PASS Desktop title initializes without overflow Canvas 2D
+PASS Enter starts and fixed-step simulation advances 
+PASS Pause freezes all simulation state 
+PASS Rapid two-corner keyboard input is preserved 
+PASS Hold-to-boost begins and releases correctly 
+PASS In-progress restart asks before discarding the run 
+PASS Settings apply immediately without mutating current run rules 
+PASS New runs use the selected level and maze 
+PASS Focus mode enters and exits without losing the game 
+PASS All three LCD instruction pages navigate back to the menu 
+PASS Complete game: food, wall collision, game over, high score 9
+PASS Saved run restores paused and resumes (fixture storage adapter) 
+PASS 390×844 mobile handset layout fits without horizontal overflow 
+PASS Real touch tap on classic keypad starts and steers 
+PASS Thumb-pad touch controls steer and pause 
+PASS Touch focus mode has visible controls and no overflow 
+PASS Real touch swipe resumes and steers without scrolling 
+PASS Window interruption auto-pauses and clears held input 
+PASS 320px narrow-screen layout and focus mode stay usable 
+PASS Landscape focus layout fits screen and controls side by side 
+PASS No uncaught browser JavaScript exceptions 
+21/21 acceptance checks passed

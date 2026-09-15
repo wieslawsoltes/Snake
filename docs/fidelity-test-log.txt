@@ -1,0 +1,12 @@
+PASS Handset uses one 480:1130 coordinate space 
+PASS 84×48 matrix projects through a non-square-pixel LCD aperture 
+PASS Earpiece has six vertically arranged receiver apertures 
+PASS Rendering stops after LCD charge settles 
+PASS Backlight also illuminates handset legends 
+PASS Dark-room preset adjusts the reflective surface and case illumination 
+PASS Viewing-angle control changes optical contrast, not geometry 
+PASS LCD game sprites and keypad remain functional after optical changes 
+PASS All twelve numeric-key hit areas are at least 44×44 CSS pixels {'width': 72.421875, 'height': 49.4375}
+PASS Optional thumb controls do not deform or replace the original handset 
+PASS No browser console or JavaScript errors 
+11 fidelity checks passed

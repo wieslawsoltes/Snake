@@ -1,0 +1,18 @@
+{
+  "name": "snake-3310",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Snake II with a reference-reconstructed Nokia 3310 handset and WebGPU reflective-LCD optics.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "start": "node tools/serve.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "python tests/browser.py",
+    "build": "node tools/build.mjs",
+    "test:browser:fixture": "python tests/browser.py --fixture",
+    "test:fidelity": "python tests/fidelity.py",
+    "test:hosted": "python tests/hosted.py",
+    "package": "npm run build && python tools/package.py"
+  }
+}

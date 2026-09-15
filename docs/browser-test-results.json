@@ -1,0 +1,115 @@
+{
+  "fixture_mode": true,
+  "limitations": [
+    "Browser navigation is disabled by host policy. Tests use set_content(), Canvas 2D, and a mocked storage adapter.",
+    "Secure-context WebGPU, real-origin persistence, PWA/offline operation, and physical mobile hardware are not exercised by fixture tests."
+  ],
+  "results": [
+    {
+      "name": "Desktop title initializes without overflow",
+      "passed": true,
+      "detail": "Canvas 2D"
+    },
+    {
+      "name": "Enter starts and fixed-step simulation advances",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pause freezes all simulation state",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Rapid two-corner keyboard input is preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Hold-to-boost begins and releases correctly",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "In-progress restart asks before discarding the run",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Settings apply immediately without mutating current run rules",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "New runs use the selected level and maze",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Focus mode enters and exits without losing the game",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "All three LCD instruction pages navigate back to the menu",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Complete game: food, wall collision, game over, high score",
+      "passed": true,
+      "detail": 9
+    },
+    {
+      "name": "Saved run restores paused and resumes (fixture storage adapter)",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "390\u00d7844 mobile handset layout fits without horizontal overflow",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Real touch tap on classic keypad starts and steers",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Thumb-pad touch controls steer and pause",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Touch focus mode has visible controls and no overflow",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Real touch swipe resumes and steers without scrolling",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Window interruption auto-pauses and clears held input",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px narrow-screen layout and focus mode stay usable",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Landscape focus layout fits screen and controls side by side",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "No uncaught browser JavaScript exceptions",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "uncaught_errors": []
+}

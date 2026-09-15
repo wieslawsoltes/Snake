@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101311">
+  <meta name="description" content="One more game. A lovingly rebuilt monochrome Snake II, with a real WebGPU LCD and controls made for your thumbs. Play offline. No ads. No account.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Snake · 3310 Edition</title>
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./assets/icon-192.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./handset.css">
+</head>
+<body>
+  <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-sound" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM16 9l6 6m0-6-6 6"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><path d="M8 3v6m8 0v6M9 15v6"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-cup" viewBox="0 0 24 24"><path d="M8 3h8v7a4 4 0 0 1-8 0zM8 5H4v3a4 4 0 0 0 4 4m8-7h4v3a4 4 0 0 1-4 4m-4 2v5m-4 2h8"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 9h1m3 0h1m3 0h2M7 12h1m3 0h1m3 0h2M8 15h8"/></symbol>
+  </defs></svg>
+  <header class="site-header">
+    <a href="./" class="brand" aria-label="Snake 3310 home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><strong>SNAKE</strong><span class="edition">3310 EDITION</span></a>
+    <div class="header-actions">
+      <span id="renderer-badge" class="engine-badge"><span></span><b>Starting</b></span>
+      <button class="icon-button" id="sound-button" aria-label="Mute sound" title="Sound · M"><svg><use href="#i-sound"/></svg></button>
+      <button class="icon-button" id="focus-button" aria-label="Enter focus mode" aria-pressed="false" title="Focus mode · F"><svg><use href="#i-expand"/></svg></button>
+      <button class="icon-button" id="settings-button" aria-label="Open settings" title="Settings"><svg><use href="#i-settings"/></svg></button>
+    </div>
+  </header>
+  <main class="layout">
+    <section class="intro" aria-labelledby="page-title">
+      <div class="eyebrow"><span class="tiny-square"></span> THE ORIGINAL DISTRACTION</div>
+      <h1 id="page-title">Small screen.<br>Endless <em>one<br>more game.</em></h1>
+      <p class="intro-copy">Back to a simpler kind of screen time.<br>Just you, a few pixels, and a growing problem.</p>
+      <button class="start-button" id="new-game-button"><span id="start-label">Let’s play</span><svg><use href="#i-arrow"/></svg></button>
+      <div class="intro-meta"><span>NO ADS</span><i></i><span>NO ACCOUNT</span><i></i><span>JUST SNAKE</span></div>
+      <div class="specimen"><span>84 × 48</span><p>one-bit pixels. Nothing superfluous.</p><div class="specimen-line"></div><span class="specimen-small">REFLECTIVE LCD / THE YEAR 2000</span></div>
+    </section>
+
+    <section class="game-column" aria-label="Snake game">
+      <div class="phone" id="phone">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 1130" class="handset-shell" aria-hidden="true">
+<defs>
+ <linearGradient id="body-edge" x1="0" x2="1"><stop stop-color="#0c1520"/><stop offset=".035" stop-color="#73808b"/><stop offset=".07" stop-color="#1c2b3c"/><stop offset=".9" stop-color="#111d2c"/><stop offset=".98" stop-color="#3b4651"/><stop offset="1" stop-color="#060e17"/></linearGradient>
+ <linearGradient id="navy" x1="0" y1="0" x2=".94" y2=".4"><stop stop-color="#36465c"/><stop offset=".16" stop-color="#2e3e53"/><stop offset=".62" stop-color="#233145"/><stop offset=".88" stop-color="#1d293a"/><stop offset="1" stop-color="#101e30"/></linearGradient>
+ <linearGradient id="face" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#34455a"/><stop offset=".36" stop-color="#26364b"/><stop offset=".82" stop-color="#1c2a3c"/><stop offset="1" stop-color="#25354a"/></linearGradient>
+ <linearGradient id="silver" x1="0" y1=".2" x2="1" y2=".65"><stop stop-color="#a1a7aa"/><stop offset=".075" stop-color="#e0dfd7"/><stop offset=".24" stop-color="#bdbfb9"/><stop offset=".5" stop-color="#c8c9c1"/><stop offset=".84" stop-color="#b7bab7"/><stop offset="1" stop-color="#7a858b"/></linearGradient>
+ <linearGradient id="glass-rim" x1="0" y1="0" x2=".6" y2="1"><stop stop-color="#091422"/><stop offset=".08" stop-color="#526070"/><stop offset=".12" stop-color="#101b27"/><stop offset=".85" stop-color="#1b2936"/><stop offset="1" stop-color="#283a49"/></linearGradient>
+ <linearGradient id="hole" x2=".4" y2="1"><stop stop-color="#00070e"/><stop offset="1" stop-color="#182635"/></linearGradient>
+ <linearGradient id="key-well" x2=".2" y2="1"><stop stop-color="#050d17"/><stop offset=".7" stop-color="#070e16"/><stop offset="1" stop-color="#73808a"/></linearGradient>
+ <filter id="plastic-grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".83" numOctaves="2" seed="3310" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".16"/></feComponentTransfer><feComposite in2="SourceGraphic" operator="in"/></filter>
+ <clipPath id="shell-clip"><path d="M101 17 C161 6 319 6 379 17 C418 24 432 55 443 123 C459 236 468 386 468 540 L460 857 C457 953 448 1043 428 1080 C412 1104 362 1117 240 1118 C118 1117 68 1104 52 1080 C32 1043 23 953 20 857 L12 540 C12 386 21 236 37 123 C48 55 62 24 101 17Z"/></clipPath>
+</defs>
+<path d="M97 10 C155 -1 325 -1 383 10 C425 18 442 53 451 114 C468 227 477 372 477 540 L470 857 C468 955 456 1049 436 1088 C423 1113 379 1124 240 1128 C101 1124 57 1113 44 1088 C24 1049 12 955 10 857 L3 540 C3 372 12 227 29 114 C38 53 55 18 97 10Z" fill="url(#body-edge)"/>
+<path d="M101 17 C161 6 319 6 379 17 C418 24 432 55 443 123 C459 236 468 386 468 540 L460 857 C457 953 448 1043 428 1080 C412 1104 362 1117 240 1118 C118 1117 68 1104 52 1080 C32 1043 23 953 20 857 L12 540 C12 386 21 236 37 123 C48 55 62 24 101 17Z" fill="url(#navy)" stroke="#657587" stroke-opacity=".35" stroke-width="1.4"/>
+<path d="M103 22 C161 11 319 11 377 22 C407 30 420 60 429 124 C443 215 449 331 444 449 C440 550 420 624 379 674 C342 716 298 736 240 739 C182 736 138 716 101 674 C60 624 40 550 36 449 C31 331 37 215 51 124 C60 60 73 30 103 22Z" fill="url(#silver)" stroke="#111e2d" stroke-width="2.4"/>
+<path d="M103 22 C161 11 319 11 377 22 C407 30 420 60 429 124 C443 215 449 331 444 449 C440 550 420 624 379 674 C342 716 298 736 240 739 C182 736 138 716 101 674 C60 624 40 550 36 449 C31 331 37 215 51 124 C60 60 73 30 103 22Z" fill="none" stroke="#f2f3e7" stroke-opacity=".48" stroke-width="1" transform="translate(0 -1)"/>
+<path d="M111 34 C166 25 314 25 369 34 C395 40 404 65 414 130 C427 219 430 333 426 448 C423 525 408 577 374 612 C341 644 294 662 240 665 C186 662 139 644 106 612 C72 577 57 525 54 448 C50 333 53 219 66 130 C76 65 85 40 111 34Z" fill="url(#face)" stroke="#0b1827" stroke-width="2.3"/>
+<path d="M111 36 C166 27 314 27 369 36" fill="none" stroke="#99a5ae" stroke-opacity=".3" stroke-width="1.5"/>
+<g clip-path="url(#shell-clip)" opacity=".42"><path d="M101 17 C161 6 319 6 379 17 C418 24 432 55 443 123 C459 236 468 386 468 540 L460 857 C457 953 448 1043 428 1080 C412 1104 362 1117 240 1118 C118 1117 68 1104 52 1080 C32 1043 23 953 20 857 L12 540 C12 386 21 236 37 123 C48 55 62 24 101 17Z" fill="#fff" filter="url(#plastic-grain)"/></g>
+<ellipse cx="240" cy="63.8" rx="8.2" ry="5.5" fill="#687583" opacity=".48"/><ellipse cx="240" cy="62" rx="8.1" ry="5.3" fill="url(#hole)"/><path d="M233 61Q240 57 247 61" fill="none" stroke="#01060c" stroke-width="1.6"/>
+<ellipse cx="240" cy="84.8" rx="8.2" ry="5.5" fill="#687583" opacity=".48"/><ellipse cx="240" cy="83" rx="8.1" ry="5.3" fill="url(#hole)"/><path d="M233 82Q240 78 247 82" fill="none" stroke="#01060c" stroke-width="1.6"/>
+<ellipse cx="240" cy="105.8" rx="8.2" ry="5.5" fill="#687583" opacity=".48"/><ellipse cx="240" cy="104" rx="8.1" ry="5.3" fill="url(#hole)"/><path d="M233 103Q240 99 247 103" fill="none" stroke="#01060c" stroke-width="1.6"/>
+<ellipse cx="240" cy="126.8" rx="8.2" ry="5.5" fill="#687583" opacity=".48"/><ellipse cx="240" cy="125" rx="8.1" ry="5.3" fill="url(#hole)"/><path d="M233 124Q240 120 247 124" fill="none" stroke="#01060c" stroke-width="1.6"/>
+<ellipse cx="240" cy="147.8" rx="8.2" ry="5.5" fill="#687583" opacity=".48"/><ellipse cx="240" cy="146" rx="8.1" ry="5.3" fill="url(#hole)"/><path d="M233 145Q240 141 247 145" fill="none" stroke="#01060c" stroke-width="1.6"/>
+<ellipse cx="240" cy="168.8" rx="8.2" ry="5.5" fill="#687583" opacity=".48"/><ellipse cx="240" cy="167" rx="8.1" ry="5.3" fill="url(#hole)"/><path d="M233 166Q240 162 247 166" fill="none" stroke="#01060c" stroke-width="1.6"/>
+<path d="M166 222H314V251H166Z" fill="#122132" stroke="#52606b" stroke-width="1"/>
+<g fill="#e8ede8" transform="translate(174 227)">
+ <path d="M0 0H6L17 12V0H23V19H17L6 7V19H0Z"/>
+ <path fill-rule="evenodd" d="M28 0H51V19H28ZM34 5V14H45V5Z"/>
+ <path d="M56 0H62V7L72 0H81L69 9L82 19H72L62 11V19H56Z"/>
+ <path d="M86 0H92V19H86Z"/>
+ <path fill-rule="evenodd" d="M105 0H115L126 19H119L117 15H103L101 19H94ZM110 4L106 10H114Z"/>
+</g>
+<!-- Recessed clear lens, above the polarizer and active LCD aperture. -->
+<path d="M77 284Q240 278 403 284Q417 284 416 303L410 554Q409 569 396 570Q240 580 84 570Q71 569 70 554L64 303Q63 284 77 284Z" fill="url(#glass-rim)" stroke="#111d29" stroke-width="3"/>
+<path d="M80 291Q240 285 400 291" fill="none" stroke="#bbc3b2" stroke-opacity=".28" stroke-width="2"/>
+<path d="M77 567Q240 580 404 567" fill="none" stroke="#7c898c" stroke-opacity=".5" stroke-width="2"/>
+<!-- Navi key recess and asymmetric C/scroll key bed. -->
+<path d="M146 623Q240 607 334 623Q317 668 240 675Q163 668 146 623Z" fill="#0a1722" stroke="#67717a" stroke-width="2"/>
+<path d="M108 647Q133 666 163 677L147 708Q117 694 93 667Z" fill="#10212b" stroke="#17252d" stroke-width="3"/>
+<path class="c-cap" d="M109 648Q134 667 161 678L146 706Q118 692 95 667Z" fill="url(#silver)" stroke="#d4d8cf" stroke-width="1"/>
+<path d="M131 670C121 659 111 669 120 680Q124 685 130 681" fill="none" stroke="#192b2d" stroke-width="3" stroke-linecap="round"/>
+<path d="M369 642L389 665Q350 710 285 730L279 683Q334 671 369 642Z" fill="#12232c" stroke="#1a292e" stroke-width="3"/>
+<path class="rocker-cap" d="M369 644L386 665Q349 709 286 727L281 684Q335 673 369 644Z" fill="url(#silver)" stroke="#d1d6cf" stroke-width="1"/>
+<g fill="none" stroke="#203234" stroke-width="3.3" stroke-linecap="round" stroke-linejoin="round"><path d="M350 668L364 657L364 671M364 657L350 658"/><path d="M308 698L297 710L297 697M297 710L311 709"/></g>
+<ellipse cx="116" cy="793" rx="57" ry="30" fill="url(#key-well)" transform="rotate(15 116 791)"/>
+<ellipse cx="240" cy="805" rx="57" ry="30" fill="url(#key-well)" transform="rotate(0 240 803)"/>
+<ellipse cx="364" cy="793" rx="57" ry="30" fill="url(#key-well)" transform="rotate(-15 364 791)"/>
+<ellipse cx="116" cy="878" rx="57" ry="30" fill="url(#key-well)" transform="rotate(15 116 876)"/>
+<ellipse cx="240" cy="890" rx="57" ry="30" fill="url(#key-well)" transform="rotate(0 240 888)"/>
+<ellipse cx="364" cy="878" rx="57" ry="30" fill="url(#key-well)" transform="rotate(-15 364 876)"/>
+<ellipse cx="116" cy="963" rx="57" ry="30" fill="url(#key-well)" transform="rotate(15 116 961)"/>
+<ellipse cx="240" cy="975" rx="57" ry="30" fill="url(#key-well)" transform="rotate(0 240 973)"/>
+<ellipse cx="364" cy="963" rx="57" ry="30" fill="url(#key-well)" transform="rotate(-15 364 961)"/>
+<ellipse cx="116" cy="1048" rx="57" ry="30" fill="url(#key-well)" transform="rotate(15 116 1046)"/>
+<ellipse cx="240" cy="1060" rx="57" ry="30" fill="url(#key-well)" transform="rotate(0 240 1058)"/>
+<ellipse cx="364" cy="1048" rx="57" ry="30" fill="url(#key-well)" transform="rotate(-15 364 1046)"/>
+<ellipse cx="240" cy="1080" rx="4" ry="2.2" fill="#050c13"/><path d="M78 1090Q240 1120 402 1090" fill="none" stroke="#687587" stroke-opacity=".22" stroke-width="1"/>
+</svg>
+        <button id="power-button" class="power-key" aria-label="Toggle LCD backlight" title="LCD backlight"></button>
+        <div class="screen-bezel">
+          <div class="screen-wrap" id="screen-wrap" tabindex="0" role="group" aria-label="Snake II. Swipe to steer. Tap to play or pause.">
+            <canvas id="lcd" width="672" height="492" role="img" aria-label="Snake II title screen"></canvas>
+          </div>
+        </div>
+        <div class="phone-navigation">
+          <button class="nav-back" id="back-button" aria-label="Open game menu or go back" title="Menu / Back · Escape"><span>C</span></button>
+          <button class="nav-select" id="select-button" aria-label="Play Snake"><span class="select-stripe"></span><span id="softkey-label" class="sr-only">Play</span></button>
+          <div class="nav-scroll"><button data-nav="up" aria-label="Previous menu item"><span>↗</span></button><button data-nav="down" aria-label="Next menu item"><span>↙</span></button></div>
+        </div>
+        <div class="keypad" id="keypad" aria-label="Classic phone keypad">
+<button data-key="1" aria-label="Show instructions" style="--kx:24.1667%;--ky:70.0000%;--key-angle:15deg"><span class="key-cap"><strong>1</strong><span>♧</span></span></button>
+<button data-dir="0" aria-label="Steer up" style="--kx:50.0000%;--ky:71.0619%;--key-angle:0deg"><span class="key-cap"><strong>2</strong><span>abc</span></span></button>
+<button data-key="3" aria-label="Open game settings" style="--kx:75.8333%;--ky:70.0000%;--key-angle:-15deg"><span class="key-cap"><strong>3</strong><span>def</span></span></button>
+<button data-dir="3" aria-label="Steer left" style="--kx:24.1667%;--ky:77.5221%;--key-angle:15deg"><span class="key-cap"><strong>4</strong><span>ghi</span></span></button>
+<button data-boost="true" aria-label="Hold to move faster" style="--kx:50.0000%;--ky:78.5841%;--key-angle:0deg"><span class="key-cap"><strong>5</strong><span>jkl</span></span></button>
+<button data-dir="1" aria-label="Steer right" style="--kx:75.8333%;--ky:77.5221%;--key-angle:-15deg"><span class="key-cap"><strong>6</strong><span>mno</span></span></button>
+<button data-key="7" aria-label="Show top scores" style="--kx:24.1667%;--ky:85.0442%;--key-angle:15deg"><span class="key-cap"><strong>7</strong><span>pqrs</span></span></button>
+<button data-dir="2" aria-label="Steer down" style="--kx:50.0000%;--ky:86.1062%;--key-angle:0deg"><span class="key-cap"><strong>8</strong><span>tuv</span></span></button>
+<button data-key="9" aria-label="Toggle LCD backlight" style="--kx:75.8333%;--ky:85.0442%;--key-angle:-15deg"><span class="key-cap"><strong>9</strong><span>wxyz</span></span></button>
+<button data-key="*" aria-label="Toggle sound" style="--kx:24.1667%;--ky:92.5664%;--key-angle:15deg"><span class="key-cap"><strong>∗</strong><span>+</span></span></button>
+<button data-key="0" aria-label="Pause or continue" style="--kx:50.0000%;--ky:93.6283%;--key-angle:0deg"><span class="key-cap"><strong>0</strong><span>⌴</span></span></button>
+<button data-key="#" aria-label="Toggle focus mode" style="--kx:75.8333%;--ky:92.5664%;--key-angle:-15deg"><span class="key-cap"><strong>#</strong><span>⇧</span></span></button>
+        </div>
+      </div>
+        <div class="thumbpad" id="thumbpad" aria-label="Touch direction controls">
+          <button data-dir="0" class="pad-up" aria-label="Steer up">▲</button>
+          <button data-dir="3" class="pad-left" aria-label="Steer left">◀</button>
+          <button class="pad-center" data-action="pause" aria-label="Play or pause"><svg><use href="#i-pause"/></svg></button>
+          <button data-dir="1" class="pad-right" aria-label="Steer right">▶</button>
+          <button data-dir="2" class="pad-down" aria-label="Steer down">▼</button>
+        </div>
+      <div class="below-phone"><span id="game-status"><i></i> Ready when you are</span><button id="control-switch" aria-pressed="false">Thumb controls <span>↗</span></button></div>
+      <div class="focus-actions"><button id="focus-menu">Menu</button><button data-boost="true">Hold to boost</button><button id="leave-focus">Exit focus</button></div>
+      <p class="swipe-hint">Swipe the screen or use the keypad.</p>
+    </section>
+
+    <aside class="sidebar" aria-label="Scores and controls">
+      <section class="score-card"><div class="section-label"><svg><use href="#i-cup"/></svg> YOUR PERSONAL BEST</div><div class="best-score" id="best-score">0000</div><div class="score-bottom"><span id="best-caption">Every legend starts at zero.</span><button id="scores-button" aria-label="View top scores">↗</button></div></section>
+      <section class="control-guide"><div class="section-label">A LITTLE MUSCLE MEMORY</div><div class="arrow-keys" aria-hidden="true"><kbd class="up">↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div><p>Arrow keys, WASD, or <b>2 4 6 8</b>.<br>On your phone? Tap or swipe.</p><div class="shortcut-row"><span>Pause / continue</span><kbd>space</kbd></div><div class="shortcut-row"><span>A little extra speed</span><kbd>hold 5</kbd></div><div class="shortcut-row"><span>Pick up and play</span><kbd>enter</kbd></div></section>
+      <section class="run-card"><div class="section-label">ON THE LITTLE SCREEN</div><div><span>Level</span><b id="level-label">04 / 09</b></div><div><span>Maze</span><b id="maze-label">No maze</b></div><div><span>Sound</span><b id="sound-label">On</b></div><button id="tune-button">Make it yours <svg><use href="#i-settings"/></svg></button></section>
+    </aside>
+  </main>
+  <footer class="site-footer"><span>A simpler time. A timeless game.</span><span>Independent recreation <i>·</i> Not affiliated with Nokia</span><button id="about-button">About this remake ↗</button></footer>
+  <div class="sr-only" id="announcer" role="status" aria-live="polite"></div>
+  <div id="toast" role="status" class="toast" hidden></div>
+
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <div class="dialog-header"><div><div class="eyebrow">YOUR GAME, YOUR WAY</div><h2 id="settings-title">A few small settings.</h2></div><button class="icon-button" data-close aria-label="Close settings"><svg><use href="#i-close"/></svg></button></div>
+    <div class="dialog-body">
+      <div class="setting-heading"><label for="level-range">Speed level</label><output id="level-output" for="level-range">4 / 9</output></div><input id="level-range" type="range" min="1" max="9" value="4"><div class="range-captions"><span>Taking it easy</span><span>Thumbs of steel</span></div>
+      <div class="setting-heading"><span id="maze-heading">Choose a maze</span><small>For your next game</small></div><div class="maze-grid" id="maze-grid" role="group" aria-labelledby="maze-heading"></div>
+      <div class="setting-heading"><span id="controls-heading">Touch controls</span></div><div class="segmented" role="group" aria-labelledby="controls-heading"><button data-control="keypad" aria-pressed="true">Classic keypad</button><button data-control="thumb" aria-pressed="false">Thumb pad</button></div>
+      <div class="toggle-row"><div><label for="sound-toggle">Tiny beeps</label><p>Procedural, monophonic game sounds.</p></div><input id="sound-toggle" type="checkbox" role="switch" checked></div>
+      <div class="toggle-row"><div><label for="haptics-toggle">Haptic feedback</label><p>A little nudge, where supported.</p></div><input id="haptics-toggle" type="checkbox" role="switch" checked></div>
+      <div class="setting-heading"><span id="lighting-heading">Physical screen lighting</span></div>
+      <div class="segmented" role="group" aria-labelledby="lighting-heading"><button data-lighting="daylight">Daylight</button><button data-lighting="backlit">Backlit</button><button data-lighting="night">Dark room</button></div>
+      <div class="setting-heading"><label for="angle-range">Viewing angle</label><output id="angle-output" for="angle-range">0°</output></div><input id="angle-range" type="range" min="-45" max="45" value="0"><div class="range-captions"><span>From above</span><span>Front-on</span><span>From below</span></div>
+      <div class="setting-heading"><label for="ambient-range">Ambient light</label><output id="ambient-output" for="ambient-range">100%</output></div><input id="ambient-range" type="range" min="5" max="100" value="100">
+      <div class="toggle-row"><div><label for="reflection-toggle">Cover glass &amp; polarizer</label><p>Subtle reflection and fixed, fine surface texture.</p></div><input id="reflection-toggle" type="checkbox" role="switch" checked></div>
+      <div class="toggle-row"><div><label for="backlight-toggle">LCD backlight</label><p>Green edge lighting behind the reflective LCD.</p></div><input id="backlight-toggle" type="checkbox" role="switch" checked></div>
+      <div class="toggle-row"><div><label for="ghosting-toggle">LCD response</label><p>Asymmetric liquid-crystal rise and decay. No CRT scanlines.</p></div><input id="ghosting-toggle" type="checkbox" role="switch" checked></div>
+      <div class="toggle-row"><div><label for="grid-toggle">Pixel matrix</label><p>Show the space between those 4,032 pixels.</p></div><input id="grid-toggle" type="checkbox" role="switch" checked></div>
+      <div class="setting-heading"><label for="contrast-range">Contrast</label><output id="contrast-output" for="contrast-range">90%</output></div><input id="contrast-range" type="range" min="55" max="100" value="90">
+      <div class="renderer-info" id="renderer-info">Initializing renderer…</div>
+    </div><div class="dialog-footer"><span>Saved on this device.</span><button class="small-primary" data-close>All set</button></div>
+  </dialog>
+  <dialog id="scores-dialog" aria-labelledby="scores-title"><div class="dialog-header"><div><div class="eyebrow">ONE MORE TRY?</div><h2 id="scores-title">The high-score club.</h2></div><button class="icon-button" data-close aria-label="Close scores"><svg><use href="#i-close"/></svg></button></div><div class="dialog-body"><p class="dialog-copy">Your best completed runs, kept on this device. Level and maze are recorded with every score.</p><div id="score-list"></div></div><div class="dialog-footer"><span id="total-runs">0 games played</span><button class="small-primary" data-close>Back to it</button></div></dialog>
+  <dialog id="about-dialog" aria-labelledby="about-title"><div class="dialog-header"><div><div class="eyebrow">HELLO AGAIN, OLD FRIEND</div><h2 id="about-title">Snake, not a screenshot.</h2></div><button class="icon-button" data-close aria-label="Close about"><svg><use href="#i-close"/></svg></button></div><div class="dialog-body about-copy">
+      <h3>The game</h3><p>Eat the little crosses. Grow your snake. Don’t bite yourself. In “No maze,” the screen wraps around. Walls in the five extra mazes are solid. Every fifth food brings a bonus bug: get it before its timer runs out.</p>
+      <h3>The controls</h3><p>Steer with arrow keys, WASD, or 2 / 4 / 6 / 8. Tap the phone keys, use the thumb pad, or swipe anywhere on the LCD. Enter plays, Space or 0 pauses, Escape opens the game menu, and holding 5 gives a 2× speed boost. M toggles sound. F toggles focus mode. Screen taps play or pause.</p>
+      <h3>The little details</h3><p>A real 84 × 48 monochrome framebuffer. A GPU compute shader for liquid-crystal pixel response. Hand-drawn pixel lettering. Independent fixed-step simulation. Automatic pause when you leave, saved games, and offline play after the first visit on a hosted version.</p>
+      <h3>A recreation, not emulation</h3><p>This is a clean-room tribute to Snake II on the Nokia 3310, not original Nokia firmware. The handset is reconstructed as original vector artwork from reference photographs. The title artwork and sound are newly made. Maze layouts, speed timings, bonus rules, and LCD response are reconstructed interpretations, not ROM-verified or physically calibrated replicas. Display color varies with the original unit, light, angle, camera, and your monitor; 100% identity is not certified. Touch controls and focus mode are modern additions. Nokia is a trademark of its owner; this project is not affiliated with or endorsed by Nokia.</p>
+      <p class="fine-print">No analytics, remote accounts, ads, or third-party runtime dependencies. Game data stays in your browser. WebGPU needs a supported browser and a secure context; Canvas 2D is used automatically otherwise.</p>
+    </div><div class="dialog-footer"><button class="text-button" id="fullscreen-button">Enter fullscreen</button><button class="small-primary" data-close>Let’s play</button></div></dialog>
+  <dialog id="restart-dialog" aria-labelledby="restart-title"><div class="dialog-header"><div><div class="eyebrow">FRESH START</div><h2 id="restart-title">Start a new game?</h2></div></div><div class="dialog-body"><p class="dialog-copy">Your current run will be replaced. Your high scores are safe.</p></div><div class="dialog-footer"><button class="text-button" data-close>Keep playing</button><button class="small-primary" id="confirm-restart">New game</button></div></dialog>
+  <noscript><div class="noscript">This game needs JavaScript. Enable JavaScript in your browser to play.</div></noscript>
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>

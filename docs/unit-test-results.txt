@@ -1,0 +1,452 @@
+
+> snake-3310@2.0.0 test
+> node --test tests/*.test.mjs
+
+TAP version 13
+# Subtest: board is exactly 28×13 = 364 cells
+ok 1 - board is exactly 28×13 = 364 cells
+  ---
+  duration_ms: 2.751658
+  type: 'test'
+  ...
+# Subtest: 84×48 LCD is a 4032-pixel monochrome framebuffer
+ok 2 - 84×48 LCD is a 4032-pixel monochrome framebuffer
+  ---
+  duration_ms: 0.674451
+  type: 'test'
+  ...
+# Subtest: all nine speed levels strictly increase speed
+ok 3 - all nine speed levels strictly increase speed
+  ---
+  duration_ms: 0.199061
+  type: 'test'
+  ...
+# Subtest: bad level and maze values are rejected
+ok 4 - bad level and maze values are rejected
+  ---
+  duration_ms: 0.669424
+  type: 'test'
+  ...
+# Subtest: maze 0: safe spawn and reachable food (No maze)
+ok 5 - maze 0: safe spawn and reachable food (No maze)
+  ---
+  duration_ms: 1.561935
+  type: 'test'
+  ...
+# Subtest: maze 1: safe spawn and reachable food (Box)
+ok 6 - maze 1: safe spawn and reachable food (Box)
+  ---
+  duration_ms: 0.745329
+  type: 'test'
+  ...
+# Subtest: maze 2: safe spawn and reachable food (Rails)
+ok 7 - maze 2: safe spawn and reachable food (Rails)
+  ---
+  duration_ms: 0.882757
+  type: 'test'
+  ...
+# Subtest: maze 3: safe spawn and reachable food (Courtyard)
+ok 8 - maze 3: safe spawn and reachable food (Courtyard)
+  ---
+  duration_ms: 1.415414
+  type: 'test'
+  ...
+# Subtest: maze 4: safe spawn and reachable food (Passages)
+ok 9 - maze 4: safe spawn and reachable food (Passages)
+  ---
+  duration_ms: 0.769806
+  type: 'test'
+  ...
+# Subtest: maze 5: safe spawn and reachable food (Labyrinth)
+ok 10 - maze 5: safe spawn and reachable food (Labyrinth)
+  ---
+  duration_ms: 0.829256
+  type: 'test'
+  ...
+# Subtest: non-running games do not advance
+ok 11 - non-running games do not advance
+  ---
+  duration_ms: 1.154759
+  type: 'test'
+  ...
+# Subtest: movement preserves length without food
+ok 12 - movement preserves length without food
+  ---
+  duration_ms: 0.162516
+  type: 'test'
+  ...
+# Subtest: horizontal wrap crosses the right edge
+ok 13 - horizontal wrap crosses the right edge
+  ---
+  duration_ms: 0.246613
+  type: 'test'
+  ...
+# Subtest: horizontal wrap crosses the left edge
+ok 14 - horizontal wrap crosses the left edge
+  ---
+  duration_ms: 0.256298
+  type: 'test'
+  ...
+# Subtest: vertical wrap crosses the top edge
+ok 15 - vertical wrap crosses the top edge
+  ---
+  duration_ms: 0.221966
+  type: 'test'
+  ...
+# Subtest: vertical wrap crosses the bottom edge
+ok 16 - vertical wrap crosses the bottom edge
+  ---
+  duration_ms: 0.163528
+  type: 'test'
+  ...
+# Subtest: direct reversal and duplicate heading are ignored
+ok 17 - direct reversal and duplicate heading are ignored
+  ---
+  duration_ms: 0.174354
+  type: 'test'
+  ...
+# Subtest: two rapid corners are buffered, one per tick
+ok 18 - two rapid corners are buffered, one per tick
+  ---
+  duration_ms: 0.185211
+  type: 'test'
+  ...
+# Subtest: reversal is rejected against queued heading, not old heading
+ok 19 - reversal is rejected against queued heading, not old heading
+  ---
+  duration_ms: 0.134774
+  type: 'test'
+  ...
+# Subtest: out of range turn input is rejected
+ok 20 - out of range turn input is rejected
+  ---
+  duration_ms: 0.178771
+  type: 'test'
+  ...
+# Subtest: food grows by one and scores exactly the selected level
+ok 21 - food grows by one and scores exactly the selected level
+  ---
+  duration_ms: 0.198691
+  type: 'test'
+  ...
+# Subtest: walls are fatal and do not corrupt the body
+ok 22 - walls are fatal and do not corrupt the body
+  ---
+  duration_ms: 0.197809
+  type: 'test'
+  ...
+# Subtest: a non-tail self collision is fatal
+ok 23 - a non-tail self collision is fatal
+  ---
+  duration_ms: 0.174484
+  type: 'test'
+  ...
+# Subtest: moving into a vacating tail is legal
+ok 24 - moving into a vacating tail is legal
+  ---
+  duration_ms: 0.153102
+  type: 'test'
+  ...
+# Subtest: moving into a growing/non-vacating tail is fatal
+ok 25 - moving into a growing/non-vacating tail is fatal
+  ---
+  duration_ms: 0.174665
+  type: 'test'
+  ...
+# Subtest: a bonus spawns on the fifth ordinary food
+ok 26 - a bonus spawns on the fifth ordinary food
+  ---
+  duration_ms: 0.224079
+  type: 'test'
+  ...
+# Subtest: bonus score depends on remaining ticks and grows over three ticks
+ok 27 - bonus score depends on remaining ticks and grows over three ticks
+  ---
+  duration_ms: 0.184419
+  type: 'test'
+  ...
+# Subtest: expired bonus disappears without affecting score
+ok 28 - expired bonus disappears without affecting score
+  ---
+  duration_ms: 0.130257
+  type: 'test'
+  ...
+# Subtest: pause freezes the bonus timer
+ok 29 - pause freezes the bonus timer
+  ---
+  duration_ms: 0.212772
+  type: 'test'
+  ...
+# Subtest: free-cell selection never places food in snake, wall or exclusion
+ok 30 - free-cell selection never places food in snake, wall or exclusion
+  ---
+  duration_ms: 4.547608
+  type: 'test'
+  ...
+# Subtest: full board terminates with a win and no food
+ok 31 - full board terminates with a win and no food
+  ---
+  duration_ms: 0.489241
+  type: 'test'
+  ...
+# Subtest: findFree terminates immediately on a full board
+ok 32 - findFree terminates immediately on a full board
+  ---
+  duration_ms: 0.122695
+  type: 'test'
+  ...
+# Subtest: snapshot round trip is exact and always resumes paused
+ok 33 - snapshot round trip is exact and always resumes paused
+  ---
+  duration_ms: 0.417823
+  type: 'test'
+  ...
+# Subtest: seeded simulations have identical trajectories and food
+ok 34 - seeded simulations have identical trajectories and food
+  ---
+  duration_ms: 1.504539
+  type: 'test'
+  ...
+# Subtest: saved RNG preserves subsequent spawns
+ok 35 - saved RNG preserves subsequent spawns
+  ---
+  duration_ms: 0.624286
+  type: 'test'
+  ...
+# Subtest: corrupt saved games are rejected
+ok 36 - corrupt saved games are rejected
+  ---
+  duration_ms: 0.624606
+  type: 'test'
+  ...
+# Subtest: food cannot be restored onto the snake
+ok 37 - food cannot be restored onto the snake
+  ---
+  duration_ms: 0.166072
+  type: 'test'
+  ...
+# Subtest: ring deque survives thousands of wrapped updates
+ok 38 - ring deque survives thousands of wrapped updates
+  ---
+  duration_ms: 10.425251
+  type: 'test'
+  ...
+# Subtest: randomized input maintains all occupancy invariants
+ok 39 - randomized input maintains all occupancy invariants
+  ---
+  duration_ms: 54.525882
+  type: 'test'
+  ...
+# Subtest: pixel operations clip correctly without expanding the buffer
+ok 40 - pixel operations clip correctly without expanding the buffer
+  ---
+  duration_ms: 0.407508
+  type: 'test'
+  ...
+# Subtest: all LCD screens remain monochrome and in bounds
+ok 41 - all LCD screens remain monochrome and in bounds
+  ---
+  duration_ms: 1.554685
+  type: 'test'
+  ...
+# Subtest: storage works when unavailable
+ok 42 - storage works when unavailable
+  ---
+  duration_ms: 0.388488
+  type: 'test'
+  ...
+# Subtest: storage tolerates denied access and quota errors
+ok 43 - storage tolerates denied access and quota errors
+  ---
+  duration_ms: 0.229197
+  type: 'test'
+  ...
+# Subtest: storage sanitizes corrupt settings and scoreboard entries
+ok 44 - storage sanitizes corrupt settings and scoreboard entries
+  ---
+  duration_ms: 0.207324
+  type: 'test'
+  ...
+# Subtest: top ten scores sort descending and persist after reopening
+ok 45 - top ten scores sort descending and persist after reopening
+  ---
+  duration_ms: 0.413286
+  type: 'test'
+  ...
+# Subtest: settings and paused session persist independently
+ok 46 - settings and paused session persist independently
+  ---
+  duration_ms: 0.177278
+  type: 'test'
+  ...
+# Subtest: title illustration contains exactly 4,032 one-bit pixels
+ok 47 - title illustration contains exactly 4,032 one-bit pixels
+  ---
+  duration_ms: 2.459265
+  type: 'test'
+  ...
+# Subtest: every proportional UI glyph has seven equally wide one-bit rows
+ok 48 - every proportional UI glyph has seven equally wide one-bit rows
+  ---
+  duration_ms: 0.556313
+  type: 'test'
+  ...
+# Subtest: proportional glyph measurements match rendering advances
+ok 49 - proportional glyph measurements match rendering advances
+  ---
+  duration_ms: 0.346525
+  type: 'test'
+  ...
+# Subtest: LCD projection remains binary after menus, clipping and title
+ok 50 - LCD projection remains binary after menus, clipping and title
+  ---
+  duration_ms: 0.814504
+  type: 'test'
+  ...
+# Subtest: liquid-crystal rise is faster than its decay
+ok 51 - liquid-crystal rise is faster than its decay
+  ---
+  duration_ms: 0.194515
+  type: 'test'
+  ...
+# Subtest: zero dt does not change charge; response bypass is immediate
+ok 52 - zero dt does not change charge; response bypass is immediate
+  ---
+  duration_ms: 0.133362
+  type: 'test'
+  ...
+# Subtest: response settles to exact binary endpoints and never overshoots
+ok 53 - response settles to exact binary endpoints and never overshoots
+  ---
+  duration_ms: 0.333875
+  type: 'test'
+  ...
+# Subtest: optical input rejects invalid persisted numeric parameters
+ok 54 - optical input rejects invalid persisted numeric parameters
+  ---
+  duration_ms: 0.285762
+  type: 'test'
+  ...
+# Subtest: pixel aperture includes narrow electrode gaps, not CRT scanlines
+ok 55 - pixel aperture includes narrow electrode gaps, not CRT scanlines
+  ---
+  duration_ms: 0.428619
+  type: 'test'
+  ...
+# Subtest: surface grain is stable and spatially varying, never animated noise
+ok 56 - surface grain is stable and spatially varying, never animated noise
+  ---
+  duration_ms: 1.374101
+  type: 'test'
+  ...
+# Subtest: unlit, backlit, dark-room and oblique projections remain finite
+ok 57 - unlit, backlit, dark-room and oblique projections remain finite
+  ---
+  duration_ms: 0.792731
+  type: 'test'
+  ...
+# Subtest: on-state ink is darker than the diffuse reflective background
+ok 58 - on-state ink is darker than the diffuse reflective background
+  ---
+  duration_ms: 0.19851
+  type: 'test'
+  ...
+# Subtest: view angle reduces contrast without corrupting the source image
+ok 59 - view angle reduces contrast without corrupting the source image
+  ---
+  duration_ms: 0.192231
+  type: 'test'
+  ...
+# Subtest: lighting presets alter the surface independently of logical pixels
+ok 60 - lighting presets alter the surface independently of logical pixels
+  ---
+  duration_ms: 0.188205
+  type: 'test'
+  ...
+# Subtest: new optical settings survive v1 save migration and validation
+ok 61 - new optical settings survive v1 save migration and validation
+  ---
+  duration_ms: 0.44873
+  type: 'test'
+  ...
+# Subtest: WebGPU contract: allocates, uploads, dispatches 63 groups and draws one triangle
+ok 62 - WebGPU contract: allocates, uploads, dispatches 63 groups and draws one triangle
+  ---
+  duration_ms: 2.275587
+  type: 'test'
+  ...
+# Subtest: unchanged framebuffer is not uploaded on every frame
+ok 63 - unchanged framebuffer is not uploaded on every frame
+  ---
+  duration_ms: 0.417752
+  type: 'test'
+  ...
+# Subtest: missing WebGPU falls back to a fresh 2D canvas
+ok 64 - missing WebGPU falls back to a fresh 2D canvas
+  ---
+  duration_ms: 193.026081
+  type: 'test'
+  ...
+# Subtest: insecure context does not request an adapter
+ok 65 - insecure context does not request an adapter
+  ---
+  duration_ms: 0.330311
+  type: 'test'
+  ...
+# Subtest: unavailable GPU adapter falls back cleanly
+ok 66 - unavailable GPU adapter falls back cleanly
+  ---
+  duration_ms: 0.271972
+  type: 'test'
+  ...
+# Subtest: shader compilation error destroys device and falls back
+ok 67 - shader compilation error destroys device and falls back
+  ---
+  duration_ms: 0.262818
+  type: 'test'
+  ...
+# Subtest: device loss replaces canvas without discarding framebuffer
+ok 68 - device loss replaces canvas without discarding framebuffer
+  ---
+  duration_ms: 152.759959
+  type: 'test'
+  ...
+# Subtest: draw failure switches to Canvas and retains next-frame upload
+ok 69 - draw failure switches to Canvas and retains next-frame upload
+  ---
+  duration_ms: 165.264494
+  type: 'test'
+  ...
+# Subtest: DPR rendering resolution is capped on very large displays
+ok 70 - DPR rendering resolution is capped on very large displays
+  ---
+  duration_ms: 0.671247
+  type: 'test'
+  ...
+# Subtest: explicit Canvas selection skips all GPU initialization
+ok 71 - explicit Canvas selection skips all GPU initialization
+  ---
+  duration_ms: 0.402791
+  type: 'test'
+  ...
+# Subtest: physical LCD projection respects a non-square-pixel display aperture
+ok 72 - physical LCD projection respects a non-square-pixel display aperture
+  ---
+  duration_ms: 0.253604
+  type: 'test'
+  ...
+# Subtest: fallback reuses optical caches until size or settings change
+ok 73 - fallback reuses optical caches until size or settings change
+  ---
+  duration_ms: 316.262209
+  type: 'test'
+  ...
+1..73
+# tests 73
+# suites 0
+# pass 73
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 891.511541

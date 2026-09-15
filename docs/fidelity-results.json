@@ -1,0 +1,64 @@
+{
+  "fixture": true,
+  "passed": 11,
+  "results": [
+    {
+      "name": "Handset uses one 480:1130 coordinate space",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "84\u00d748 matrix projects through a non-square-pixel LCD aperture",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Earpiece has six vertically arranged receiver apertures",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Rendering stops after LCD charge settles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Backlight also illuminates handset legends",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dark-room preset adjusts the reflective surface and case illumination",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Viewing-angle control changes optical contrast, not geometry",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "LCD game sprites and keypad remain functional after optical changes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "All twelve numeric-key hit areas are at least 44\u00d744 CSS pixels",
+      "passed": true,
+      "detail": {
+        "width": 72.421875,
+        "height": 49.4375
+      }
+    },
+    {
+      "name": "Optional thumb controls do not deform or replace the original handset",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "No browser console or JavaScript errors",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}
