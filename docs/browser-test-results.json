@@ -1,9 +1,6 @@
 {
-  "fixture_mode": true,
-  "limitations": [
-    "Browser navigation is disabled by host policy. Tests use set_content(), Canvas 2D, and a mocked storage adapter.",
-    "Secure-context WebGPU, real-origin persistence, PWA/offline operation, and physical mobile hardware are not exercised by fixture tests."
-  ],
+  "fixture_mode": false,
+  "limitations": [],
   "results": [
     {
       "name": "Desktop title initializes without overflow",
@@ -61,7 +58,7 @@
       "detail": 9
     },
     {
-      "name": "Saved run restores paused and resumes (fixture storage adapter)",
+      "name": "Origin localStorage restores paused session across reload",
       "passed": true,
       "detail": null
     },

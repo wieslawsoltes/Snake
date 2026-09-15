@@ -1,0 +1,106 @@
+{
+  "version": "2.0.0",
+  "source_commit": "a56859756ded87c86fdf5ccec02f5da56fb5cf4c",
+  "files": [
+    {
+      "path": ".nojekyll",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "assets/handset.svg",
+      "bytes": 8977,
+      "sha256": "602434cfc6e19688f22e52f87c4dd03e3ec1e752cb7f5b687e393630c9d1e27d"
+    },
+    {
+      "path": "assets/icon-192.png",
+      "bytes": 3016,
+      "sha256": "cfa57cf94c56b055e3e347c5fc6b9075e598994e8fa0debe97068414e7105867"
+    },
+    {
+      "path": "assets/icon-512.png",
+      "bytes": 2266,
+      "sha256": "f2e2947b610a4440473844f43fa68a373805cb988aa1851759b2fc8b236a4ab5"
+    },
+    {
+      "path": "assets/icon.svg",
+      "bytes": 535,
+      "sha256": "27f0bc3445a9dd3c4daec881c609430087b227673c2da7f254d855808ea27b2b"
+    },
+    {
+      "path": "build-info.json",
+      "bytes": 132,
+      "sha256": "34b09daeccc1e6e614f455063a7613724fbf05b2ea669245ce219996feee8609"
+    },
+    {
+      "path": "handset.css",
+      "bytes": 9311,
+      "sha256": "228bf4a748123afee7b8d1f0833312e082adbed3e4e3465fd5f496b5d6e4c6f3"
+    },
+    {
+      "path": "index.html",
+      "bytes": 26007,
+      "sha256": "192b5c32c923bb90d312a8d2831fa902a3e140f85ea528ef1c807b7988f37db8"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "bytes": 470,
+      "sha256": "a7d547e643999629eb6c79662d838462efa878aa3c450f1efb6e1fc915875def"
+    },
+    {
+      "path": "src/app.js",
+      "bytes": 26514,
+      "sha256": "31dd9ef9b12c5ca8bf3ec23a807064b83b76e1c87f9f3c37b1506e440bdf50b5"
+    },
+    {
+      "path": "src/artwork.js",
+      "bytes": 4433,
+      "sha256": "376967704b728f717d65c92e9690002d18f5c1127b8511ad72b74caa4478478f"
+    },
+    {
+      "path": "src/audio.js",
+      "bytes": 1826,
+      "sha256": "7d8f70c0dbcfb17d251231438d7f9b61a9562e5923afb8a776eb82288fb76f5f"
+    },
+    {
+      "path": "src/engine.js",
+      "bytes": 8848,
+      "sha256": "3dc7bf81f69ae88d8f9f3d23994ac60368aa6cc5d8173d6d1121d056b5c646a8"
+    },
+    {
+      "path": "src/font.js",
+      "bytes": 4013,
+      "sha256": "e26108d9bbcb53befcf6e81bbae8838d7099f434da0af7e2a589d9c6e84e6e5e"
+    },
+    {
+      "path": "src/lcd.js",
+      "bytes": 6308,
+      "sha256": "417dbaedc3f32dc1aedebbfa98dbe10a9de2b91c6656bfce1b87da83a03ba592"
+    },
+    {
+      "path": "src/optics.js",
+      "bytes": 2866,
+      "sha256": "557fffea133925325a342039017626595642d2f0305069a398c66fbcc0eaf324"
+    },
+    {
+      "path": "src/renderer.js",
+      "bytes": 14165,
+      "sha256": "b70c5a57587366d1e55596536638f70941da57b72e8159cd0967fefe1594cafb"
+    },
+    {
+      "path": "src/storage.js",
+      "bytes": 2821,
+      "sha256": "a31dc13ab2ec91168e6cb766b7da9d0344aa1254036abfca4897a60a42c2f5db"
+    },
+    {
+      "path": "styles.css",
+      "bytes": 21414,
+      "sha256": "e449a3fd9bb1bb41a9905ef95effd743109aa3f90c8b187c6691db2ab3e7f41f"
+    },
+    {
+      "path": "sw.js",
+      "bytes": 1398,
+      "sha256": "2caa87f047e930d0a30ad720924bae4ec24d11fa7804461252866d3eb93d3748"
+    }
+  ]
+}

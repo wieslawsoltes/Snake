@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse, json, shutil
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[1]
-p=argparse.ArgumentParser();p.add_argument('--fixture',action='store_true');p.add_argument('--url',default='http://localhost:8080/');p.add_argument('--browser',default=shutil.which('chromium'));args=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--fixture',action='store_true');p.add_argument('--url',default='http://localhost:8080/');p.add_argument('--browser',default=shutil.which('chromium'));p.add_argument('--headed',action='store_true');args=p.parse_args()
 OUT=ROOT/'docs'/'fidelity';OUT.mkdir(parents=True,exist_ok=True)
 results=[];errors=[]
 def ok(name, detail=None):results.append({'name':name,'passed':True,'detail':detail});print('PASS',name,detail or '')
@@ -17,7 +17,7 @@ def load(page):
  else:page.goto(args.url+'?debug&nosw',wait_until='networkidle')
  page.wait_for_function('!!window.__snake');page.wait_for_timeout(1300)
 with sync_playwright() as p:
- launch={'headless':True,'args':['--no-sandbox','--enable-unsafe-webgpu','--use-webgpu-adapter=swiftshader','--enable-features=Vulkan','--use-angle=vulkan','--use-vulkan=swiftshader','--disable-vulkan-surface']}
+ launch={'headless':not args.headed,'args':['--no-sandbox','--disable-gpu-watchdog','--enable-unsafe-webgpu','--use-webgpu-adapter=swiftshader','--enable-features=Vulkan','--use-angle=vulkan','--use-vulkan=swiftshader','--disable-vulkan-surface']}
  if args.browser:launch['executable_path']=args.browser
  b=p.chromium.launch(**launch)
  page=b.new_page(viewport={'width':1440,'height':1080},device_scale_factor=1);load(page)

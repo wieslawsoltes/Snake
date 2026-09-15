@@ -1,0 +1,72 @@
+{
+  "browser": "Chromium",
+  "adapter": {
+    "vendor": "google",
+    "architecture": "swiftshader",
+    "device": "",
+    "description": ""
+  },
+  "real_origin": true,
+  "software_adapter": true,
+  "gpu_validation": "native compute + fragment texture readback; swap-chain presentation not covered",
+  "passed": 8,
+  "results": [
+    {
+      "name": "Actual WGSL compute and fragment pipelines initialize over a secure origin",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "WebGPU/Canvas optical projection agrees: daylight",
+      "passed": true,
+      "detail": {
+        "mean_channel_error": 0.06829510259388309,
+        "max_channel_error": 3
+      }
+    },
+    {
+      "name": "WebGPU/Canvas optical projection agrees: backlit",
+      "passed": true,
+      "detail": {
+        "mean_channel_error": 0.06764582526777649,
+        "max_channel_error": 3
+      }
+    },
+    {
+      "name": "WebGPU/Canvas optical projection agrees: darkroom",
+      "passed": true,
+      "detail": {
+        "mean_channel_error": 0.06825880758807588,
+        "max_channel_error": 3
+      }
+    },
+    {
+      "name": "WebGPU/Canvas optical projection agrees: oblique",
+      "passed": true,
+      "detail": {
+        "mean_channel_error": 0.07244886436959608,
+        "max_channel_error": 4
+      }
+    },
+    {
+      "name": "Actual GPU device loss replaces the canvas and restores the CPU renderer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Versioned service worker installs and controls the hosted application",
+      "passed": true,
+      "detail": {
+        "names": [
+          "snake3310-shell-v2"
+        ],
+        "count": 17
+      }
+    },
+    {
+      "name": "App-shell, module imports and gameplay work after an offline reload",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

@@ -13,6 +13,7 @@ parser.add_argument('--fixture', action='store_true')
 parser.add_argument('--url', default='http://localhost:8080/')
 parser.add_argument('--browser', default=os.environ.get('CHROMIUM_PATH') or shutil.which('chromium'))
 parser.add_argument('--require-webgpu', action='store_true')
+parser.add_argument('--headed', action='store_true')
 args = parser.parse_args()
 OUT = ROOT / 'docs' / 'screenshots'
 OUT.mkdir(parents=True, exist_ok=True)
@@ -56,7 +57,7 @@ def check_overflow(page):
 
 try:
     with sync_playwright() as p:
-        launch = {'headless': True, 'args': ['--no-sandbox', '--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader', '--enable-features=Vulkan', '--use-angle=vulkan', '--use-vulkan=swiftshader', '--disable-vulkan-surface']}
+        launch = {'headless': not args.headed, 'args': ['--no-sandbox','--disable-gpu-watchdog', '--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader', '--enable-features=Vulkan', '--use-angle=vulkan', '--use-vulkan=swiftshader', '--disable-vulkan-surface']}
         if args.browser:
             launch['executable_path'] = args.browser
         browser = p.chromium.launch(**launch)

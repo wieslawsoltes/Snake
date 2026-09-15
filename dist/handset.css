@@ -1,0 +1,118 @@
+/* Nokia 3310 front projection. Coordinate space: 480 × 1130.
+   The silhouette, lens, trim and keypad share one immutable coordinate system.
+   Enlarged, non-overlapping HTML hit boxes are independent of physical key caps. */
+.game-column { position:relative; }
+#phone {
+  container-type:inline-size; width:310px; aspect-ratio:480/1130; height:auto;
+  padding:0; border:0; border-radius:0; background:none; box-shadow:none;
+  isolation:isolate; flex-shrink:0; filter:drop-shadow(1px 3px 2px #0009) drop-shadow(8px 25px 24px #0007);
+}
+#phone::before,#phone::after { display:none; }
+#phone .handset-shell { display:block; position:absolute; inset:0; width:100%; height:100%; stroke:none; pointer-events:none; }
+#phone .screen-bezel {
+  position:absolute; left:15.65%; top:26.5%; width:68.7%; height:21.4%;
+  border:none; background:none; border-radius:0; padding:0; margin:0; box-shadow:none;
+}
+#phone .screen-wrap {
+  width:100%; height:100%; aspect-ratio:30/22; border:0; border-radius:3.2% / 3%;
+  background:#9aab71; box-shadow:0 0 0 1px #070f13,0 1px 1px #bbc09b55;
+  overflow:hidden; touch-action:none; position:relative;
+}
+#phone .screen-wrap::after {
+  border-radius:inherit; box-shadow:inset 0 3px 4px #1a271e9c,inset 2px 0 2px #26342355,inset -1px -1px 2px #1727136b;
+  background:linear-gradient(168deg,#ffffff05 0%,transparent 45%); pointer-events:none;
+}
+#phone #lcd { width:100%; height:100%; image-rendering:auto; display:block; }
+#phone .phone-navigation { display:contents; }
+#phone .nav-select,#phone .nav-back,#phone .nav-scroll {
+  position:absolute; margin:0; padding:0; transform:none; box-shadow:none; border:0;
+  color:#14282c; background:none; touch-action:none;
+}
+#phone .nav-select {
+  left:30.7%; top:54.7%; width:38.6%; height:4.95%;
+  display:flex; justify-content:center; align-items:center; border-radius:25% 25% 50% 50% / 20% 20% 88% 88%;
+  background:linear-gradient(174deg,#e6e5dc 0%,#d2d5c9 40%,#9aa6a0 100%);
+  border:1px solid #21323b; box-shadow:inset 0 1px 1px #fffb,0 1px 0 #0b1523;
+}
+#phone .select-stripe { width:48%; height:12%; border-radius:0 0 50% 50% / 0 0 80% 80%; background:#4c99a0; box-shadow:0 1px 0 #e8f4e999; transform:translateY(-3%); }
+#phone .nav-select #softkey-label { position:absolute; clip:rect(0,0,0,0); width:1px; height:1px; overflow:hidden; }
+#phone .nav-back {
+  left:16.1%; top:57.75%; width:16.2%; height:6.65%;
+  clip-path:polygon(31% 0,100% 54%,65% 100%,40% 87%,0 39%);
+  border-radius:13%; background:linear-gradient(137deg,#e0e0d6,#b2bbb3);
+  box-shadow:inset 0 1px 1px #fff9;
+}
+#phone .nav-back span { display:block; transform:rotate(34deg) translate(-1px,1px); font:italic 500 6cqw/1 Georgia,serif; }
+#phone .nav-scroll { left:57.8%; top:57.4%; width:25.5%; height:8.05%; overflow:visible; border-radius:0; }
+#phone .nav-scroll button { position:absolute; width:100%; height:100%; font:500 6.3cqw/1 Arial,sans-serif; padding:0; color:#15282c; background:linear-gradient(160deg,#d6d9cf,#acb6ae); }
+#phone .nav-scroll button[data-nav=up] { clip-path:polygon(84% 0,100% 31%,55% 78%,15% 53%); }
+#phone .nav-scroll button[data-nav=down] { clip-path:polygon(12% 57%,54% 81%,39% 92%,4% 100%,0 68%); }
+#phone .nav-scroll button[data-nav=up] span { position:absolute; top:21%; right:13%; transform:none; }
+#phone .nav-scroll button[data-nav=down] span { position:absolute; bottom:7%; left:6%; transform:none; }
+#phone .nav-scroll button:first-child { border:none; }
+#phone .keypad { display:contents; padding:0; margin:0; }
+#phone .keypad>button {
+  position:absolute; left:var(--kx); top:var(--ky); width:25%; height:7.25%;
+  min-height:0; margin:0; padding:0; transform:translate(-50%,-50%);
+  border-radius:20%; background:none; color:#17252b; border:0; box-shadow:none;
+  display:flex; align-items:center; justify-content:center; touch-action:none;
+  transition:none; -webkit-tap-highlight-color:transparent;
+}
+#phone .keypad>button .key-cap {
+  display:flex; align-items:baseline; justify-content:center; gap:3%; width:89%; height:62%;
+  transform:rotate(var(--key-angle)); border-radius:49% 49% 48% 48% / 47% 47% 54% 54%;
+  background:linear-gradient(168deg,#ecebe2 0%,#d5d7cc 27%,#c6ccbf 59%,#95a598 100%);
+  border:1px solid #bec6bc; box-shadow:inset 0 1px 1px #ffffffe6,inset 0 -1px 1px #34463f77,0 2px 2px #0009;
+  color:#18252b; padding:2% 0 0; line-height:1;
+}
+#phone .keypad strong { font:500 6.3cqw/1.18 Arial,sans-serif; text-shadow:0 1px #faf9e466; letter-spacing:-.5px; }
+#phone .keypad .key-cap>span { font:600 2.55cqw/1 Arial,sans-serif; color:inherit; align-self:auto; letter-spacing:-.03em; }
+#phone .keypad>button:nth-child(3n) .key-cap { flex-direction:row-reverse; }
+#phone .keypad>button:nth-child(10) .key-cap>span,#phone .keypad>button:nth-child(12) .key-cap>span { font-size:3cqw; }
+#phone .keypad>button:nth-child(11) .key-cap>span { font-size:4cqw; }
+#phone .keypad>button:nth-child(5) .key-cap::after { content:'·'; position:absolute; left:12%; top:30%; font-size:4cqw; color:#e7ebe1; text-shadow:0 1px #6c7b6c; }
+#phone .keypad>button:hover { filter:none; }
+#phone .keypad>button:active,#phone .keypad>button.pressed { translate:0 0; box-shadow:none; filter:none; }
+#phone .keypad>button:active .key-cap,#phone .keypad>button.pressed .key-cap { transform:translateY(1.5px) rotate(var(--key-angle)); filter:brightness(.91); box-shadow:inset 0 1px 2px #607c5c77; }
+#phone .nav-select:active,#phone .nav-select.pressed,#phone .nav-back:active,#phone .nav-back.pressed,#phone .nav-scroll button:active,#phone .nav-scroll button.pressed { translate:0 1px; filter:brightness(.9); }
+#phone .power-key { position:absolute; left:40%; top:-.3%; width:20%; height:1.15%; min-height:8px; border-radius:50% 50% 0 0; border:1px solid #5c666d; background:linear-gradient(#434f5a,#152334); z-index:-1; }
+body[data-backlight="on"] #phone .key-cap,body[data-backlight="on"] #phone .nav-back,body[data-backlight="on"] #phone .nav-scroll button { color:#5b9b28; text-shadow:0 0 2px #a3e43840; }
+body[data-backlight="on"] #phone .key-cap { background:linear-gradient(168deg,#e1e5d3,#c6d0b7 50%,#94aa82); }
+body[data-backlight="on"] #phone .keypad strong,body[data-backlight="on"] #phone .nav-scroll button { color:inherit; }
+body[data-backlight="on"] #phone .select-stripe { background:#66ca48; box-shadow:0 0 4px #83da6630; }
+.game-column>.thumbpad { margin:20px auto 0; flex-shrink:0; }
+.below-phone { width:310px; max-width:100%; margin-top:20px; }
+.swipe-hint { display:block; font-size:10px; color:#77846b; margin:8px 0 0; }
+body.focus-mode #phone { width:100%; aspect-ratio:30/22; filter:none; display:block; }
+body.focus-mode #phone .handset-shell,body.focus-mode #phone .phone-navigation,body.focus-mode #phone .keypad,body.focus-mode #phone .power-key { display:none; }
+body.focus-mode #phone .screen-bezel { inset:0; width:100%; height:100%; margin:0; padding:8px; background:#1c2b22; border:1px solid #4d5b3d; border-radius:8px; }
+body.focus-mode #phone .screen-wrap { border-radius:3px; }
+body.focus-mode .game-column { width:min(650px,100%); }
+body.focus-mode .game-column>.thumbpad { display:grid; }
+@media(min-width:1600px){#phone{width:330px}}
+@media(max-width:640px){
+ #phone{width:clamp(260px,calc((100svh - 162px) * .42478),300px);max-width:calc(100vw - 36px)}
+ .layout{padding-top:9px;padding-bottom:10px}.below-phone{width:290px;max-width:calc(100vw - 34px);margin-top:13px}
+ .site-footer{padding-top:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+ .game-column>.thumbpad{grid-template:repeat(3,58px)/repeat(3,70px)}
+ body.focus-mode #phone{width:100%;max-width:none;aspect-ratio:30/22}
+ body.focus-mode .layout{min-height:0;padding-top:10px}
+ body.focus-mode .game-column>.thumbpad{margin-top:18px}
+}
+@media(orientation:landscape) and (max-height:560px){
+ body.focus-mode .game-column{display:grid;grid-template-columns:minmax(230px,1fr) 185px;gap:12px;width:100%}
+ body.focus-mode #phone{width:100%;height:min(67svh,320px);aspect-ratio:auto}
+ body.focus-mode #phone .screen-bezel{position:relative;width:auto;height:100%;aspect-ratio:30/22;max-width:100%;margin:auto}
+ body.focus-mode .game-column>.thumbpad{grid-column:2;grid-row:1;grid-template:repeat(3,46px)/repeat(3,54px);margin:0}
+ body.focus-mode .focus-actions{grid-column:1/3;flex-direction:row;gap:15px;justify-content:center;margin:0}
+ body.focus-mode .swipe-hint{display:none}
+}
+@media(forced-colors:active){#phone .key-cap,#phone .nav-select{border:1px solid ButtonText}.handset-shell{forced-color-adjust:none}.screen-wrap{forced-color-adjust:none}}
+#phone .handset-shell { filter:brightness(var(--case-light,1)); }
+/* One-piece sculpted navigation key graphics live in SVG; HTML supplies generous hit areas. */
+#phone .nav-back {left:18.5%;top:56.8%;width:18.5%;height:7.2%;clip-path:none;border-radius:20%;background:transparent;box-shadow:none}
+#phone .nav-back span,#phone .nav-scroll span {visibility:hidden}
+#phone .nav-scroll {left:57.8%;top:56.5%;width:27%;height:9%;background:none}
+#phone .nav-scroll button[data-nav=up] {left:42%;top:0;width:58%;height:64%;clip-path:none;background:transparent}
+#phone .nav-scroll button[data-nav=down] {left:0;top:43%;width:57%;height:57%;clip-path:none;background:transparent}
+#phone:has(.nav-back.pressed) .c-cap,#phone:has(.nav-scroll .pressed) .rocker-cap {filter:brightness(.84)}

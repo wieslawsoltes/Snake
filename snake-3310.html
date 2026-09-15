@@ -1,0 +1,1369 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101311">
+  <meta name="description" content="One more game. A lovingly rebuilt monochrome Snake II, with a real WebGPU LCD and controls made for your thumbs. Play offline. No ads. No account.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Snake · 3310 Edition</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22512%22%20height%3D%22512%22%20viewBox%3D%220%200%20512%20512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%22108%22%20fill%3D%22%23101311%22%2F%3E%3Crect%20x%3D%2278%22%20y%3D%2299%22%20width%3D%22356%22%20height%3D%22286%22%20rx%3D%2225%22%20fill%3D%22%23afbf77%22%2F%3E%3Cg%20fill%3D%22%2327361f%22%3E%3Cpath%20d%3D%22M142%20206h76v-38h114v38h-76v38H142zm-38%200h38v114h114v-38h38v76H104z%22%2F%3E%3Crect%20x%3D%22294%22%20y%3D%22168%22%20width%3D%2238%22%20height%3D%2238%22%2F%3E%3Cpath%20d%3D%22M351%20276h38v12h12v14h-12v12h-14v-12h-24z%22%2F%3E%3C%2Fg%3E%3Crect%20x%3D%22320%22%20y%3D%22170%22%20width%3D%227%22%20height%3D%228%22%20fill%3D%22%23afbf77%22%2F%3E%3Crect%20x%3D%22320%22%20y%3D%22194%22%20width%3D%227%22%20height%3D%228%22%20fill%3D%22%23afbf77%22%2F%3E%3C%2Fsvg%3E%0A" type="image/svg+xml">
+  <style>
+:root{color-scheme:dark;--bg:#101311;--panel:#181d19;--line:#2a312a;--text:#e9eee5;--muted:#8b9689;--accent:#bfdc95;--ink:#20251e;--radius:20px;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0;min-height:100svh;background:radial-gradient(ellipse at 51% 39%,#202a203b,transparent 49%),var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}button,a,input{-webkit-tap-highlight-color:transparent}button{font:inherit;color:inherit;cursor:pointer}button{border:0;background:none}button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:5px}button:disabled{opacity:.4;cursor:default}svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}a{color:inherit}.icon-definitions{position:absolute;width:0;height:0;overflow:hidden}.site-header{max-width:1440px;margin:auto;padding:28px 48px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:14px;text-decoration:none}.brand strong{font-size:18px;letter-spacing:3px;font-weight:850}.brand-mark{position:relative;width:25px;height:25px;color:var(--accent)}.brand-mark i{position:absolute;display:block;width:7px;height:7px;background:currentColor}.brand-mark i:nth-child(1){top:0;left:16px}.brand-mark i:nth-child(2){top:0;left:8px}.brand-mark i:nth-child(3){top:8px;left:8px}.brand-mark i:nth-child(4){top:16px;left:8px}.brand-mark i:nth-child(5){top:16px;left:0}.edition{font-family:monospace;font-size:10px;letter-spacing:1.5px;color:var(--muted);border-left:1px solid #394235;padding-left:14px;line-height:18px}.header-actions{display:flex;align-items:center;gap:10px}.icon-button{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;transition:background .15s,color .15s;color:#a5afa0}.icon-button:hover{background:#262e24;color:#e5eddc}.engine-badge{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid #35412e;border-radius:5px;margin-right:10px;color:var(--accent);font-size:10px;letter-spacing:.3px}.engine-badge span{width:5px;height:5px;border-radius:50%;background:var(--accent)}.engine-badge b{font-weight:500}.layout{max-width:1240px;min-height:calc(100svh - 182px);margin:0 auto;display:grid;grid-template-columns:1fr 360px 1fr;align-items:center;column-gap:64px;padding:18px 44px 36px}.intro{padding-bottom:12px}.eyebrow{font-size:9px;letter-spacing:1.8px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:8px}.tiny-square{width:4px;height:4px;background:currentColor}.intro h1{font-size:clamp(32px,3.2vw,44px);letter-spacing:-1.9px;font-weight:520;line-height:1.15;margin:25px 0}.intro h1 em{font-style:normal;color:var(--accent)}.intro-copy{font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:28px}.start-button{width:188px;display:flex;align-items:center;justify-content:space-between;gap:24px;border-radius:9px;padding:15px 17px;background:var(--accent);color:var(--ink);font-size:12px;font-weight:650;box-shadow:0 3px 0 #6b804e;transition:transform .15s,background .15s}.start-button:hover{background:#cfe9a8;transform:translateY(-1px)}.start-button:active{transform:translateY(2px);box-shadow:none}.start-button svg{width:17px;height:17px}.intro-meta{display:flex;align-items:center;gap:8px;font-size:7px;letter-spacing:.65px;margin-top:17px;color:#737e6c;white-space:nowrap}.intro-meta i{height:2px;width:2px;background:#69745f;border-radius:50%}.specimen{margin-top:64px;color:#6a7665}.specimen>span:first-child{font-size:28px;letter-spacing:-1px;color:#89977e;font-weight:300}.specimen p{margin:5px 0 20px;font-size:11px}.specimen-line{height:1px;width:136px;background:linear-gradient(90deg,#394333,transparent);margin-bottom:14px}.specimen-small{font:7px monospace;letter-spacing:.5px}.game-column{display:flex;flex-direction:column;align-items:center;min-width:0}.phone{width:340px;isolation:isolate;position:relative;padding:26px 24px 24px;border-radius:69px 69px 78px 78px / 88px 88px 57px 57px;background:linear-gradient(103deg,#111a25 0%,#34414e 9%,#26323e 22%,#26333f 73%,#182331 94%,#0c121b 100%);border:2px solid #4b5660;box-shadow:inset 0 2px 1px #64717a,inset 3px 0 3px #0007,inset -3px 0 3px #000c,0 26px 48px #0008,0 5px 7px #0009}.phone::before{content:"";position:absolute;inset:7px;z-index:-1;border-radius:inherit;border:1px solid #7e8a9520;pointer-events:none}.phone::after{content:"";width:55px;height:5px;position:absolute;top:-5px;left:calc(50% - 27px);background:#1b242c;border-radius:5px 5px 0 0;border:1px solid #586168;z-index:-1}.phone-top{height:64px;display:flex;align-items:center;flex-direction:column}.speaker{display:flex;gap:3px;width:66px;flex-direction:column;align-items:center;margin-bottom:16px}.speaker i{display:block;background:#0c131b;width:54px;height:3px;border-radius:6px;box-shadow:0 1px 0 #59616c}.speaker i:nth-child(2){width:62px}.phone-wordmark{font-family:Arial,sans-serif;font-weight:900;letter-spacing:2.4px;font-size:23px;line-height:23px;color:#dce0de;text-shadow:0 -1px #090d14}.screen-bezel{background:linear-gradient(145deg,#111b21,#37424a 64%,#232e37);padding:12px 10px 0;border-radius:14px 14px 29px 29px;border:1px solid #0b121a;box-shadow:0 1px 0 #63707b66,inset 0 1px 4px #0008;margin-top:13px}.screen-wrap{position:relative;touch-action:none;aspect-ratio:84/48;overflow:hidden;background:#a7bd75;border:2px solid #101612;box-shadow:0 0 0 1px #556344,0 1px 3px #070b10,inset 0 4px 12px #243716;border-radius:3px;cursor:pointer;user-select:none;-webkit-user-select:none}.screen-wrap::after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 2px 7px #17221170;background:linear-gradient(150deg,#ffffff06,transparent 50%)}#lcd{width:100%;height:100%;display:block;image-rendering:pixelated}.bezel-caption{font:7px monospace;letter-spacing:2px;display:flex;justify-content:space-between;color:#84939166;padding:6px 8px 7px}.phone-navigation{height:66px;display:flex;justify-content:center;align-items:center;gap:19px}.nav-back,.nav-select,.nav-scroll{background:linear-gradient(#e3e7e3,#b8c0bd 60%,#95a19e);box-shadow:inset 0 1px 2px #fff,0 3px 0 #0c1720,0 4px 3px #0007;color:#2f3b3e}.nav-back{border-radius:55% 40% 45% 40%;width:54px;height:29px;transform:rotate(-13deg);font-size:17px;font-weight:600}.nav-select{border-radius:45% 45% 45% 45% / 65% 65% 45% 45%;height:45px;width:106px;display:flex;align-items:center;flex-direction:column;justify-content:center;gap:4px;padding:0}.select-stripe{background:#487d71;border-radius:10px;width:54px;height:4px;box-shadow:0 1px #eaf2ec}.nav-select span:last-child{font-size:10px;line-height:12px;color:#435657;font-weight:650}.nav-scroll{border-radius:45% 40% 45% 40%;height:32px;display:flex;transform:rotate(13deg);overflow:hidden;width:64px}.nav-scroll button{width:32px;position:relative;font-size:23px;line-height:30px;color:#364649;padding:0}.nav-scroll button:first-child{border-right:1px solid #84928f}.nav-scroll button span{display:inline-block;transform:rotate(-13deg)}.keypad{padding:0 3px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px 11px}.keypad button{position:relative;min-height:43px;border-radius:44% 44% 42% 42% / 38% 38% 52% 52%;background:linear-gradient(160deg,#d4dbd9,#acb8b7 60%,#879995);box-shadow:inset 0 1px 1px #fff9,inset 0 -1px 2px #4e6663,0 3px 0 #091420,0 4px 3px #0b141a;display:flex;align-items:baseline;justify-content:center;gap:4px;padding:8px 6px 9px;touch-action:none;user-select:none;-webkit-user-select:none;color:#273d41;transition:filter .08s,translate .08s}.keypad button:nth-child(3n+1){transform:rotate(7deg)}.keypad button:nth-child(3n){transform:rotate(-7deg)}.keypad strong{font-size:22px;font-weight:450;line-height:24px;text-shadow:0 1px #edf1ed88}.keypad span{font-size:9px;font-weight:650;letter-spacing:-.3px;align-self:center}.keypad button:nth-child(n+10) span{font-size:7px;letter-spacing:0}.keypad i{font-style:normal;font-size:6px;color:#396258;position:absolute;bottom:4px;left:0;right:0;text-align:center}.keypad .boost-key i{font-size:12px;bottom:0;line-height:10px}.keypad button:hover{filter:brightness(1.09)}.keypad button:active,.keypad button.pressed,.nav-select:active,.nav-select.pressed,.thumbpad button:active,.thumbpad button.pressed{translate:0 2px;box-shadow:inset 0 1px 3px #34463d40,0 1px 0 #0b1820;filter:brightness(.93)}.phone-chin{height:17px;display:flex;align-items:flex-end;justify-content:center}.phone-chin i{height:3px;width:15px;border-radius:3px;background:#09131a;box-shadow:0 1px #66727777}.below-phone{width:330px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;font-size:9px;color:#87977c;gap:10px}.below-phone>span{display:flex;align-items:center;gap:6px}.below-phone i{display:block;width:4px;height:4px;background:#9dbc7c;border-radius:50%}.below-phone button{color:#9ea990;font-size:9px;padding:6px 0}.below-phone button span{margin-left:4px}.swipe-hint{display:none}.thumbpad{display:none;grid-template:repeat(3,55px)/repeat(3,62px);gap:5px;justify-content:center;margin-top:8px}.thumbpad button{background:linear-gradient(#cfdbcf,#99ad9e);color:#314734;border-radius:13px;box-shadow:0 3px 0 #0c1b18;touch-action:none;user-select:none;-webkit-user-select:none;font-size:17px;display:flex;align-items:center;justify-content:center}.thumbpad .pad-up{grid-area:1/2}.thumbpad .pad-left{grid-area:2/1}.thumbpad .pad-center{grid-area:2/2;background:linear-gradient(#71846d,#526a50);color:#dce8d1}.thumbpad .pad-right{grid-area:2/3}.thumbpad .pad-down{grid-area:3/2}.thumb-mode .keypad{display:none}.thumb-mode .thumbpad{display:grid}.thumb-mode .phone-chin{height:30px}.focus-actions{display:none}.sidebar{max-width:220px;justify-self:end;width:100%;padding-top:4px}.section-label{font-size:8px;letter-spacing:1.15px;color:#84947a;display:flex;align-items:center;gap:8px;font-weight:500}.section-label svg{width:14px;height:14px}.score-card{padding:19px 19px 12px;border:1px solid #354030;border-radius:12px;background:linear-gradient(125deg,#27332144,transparent)}.best-score{font-family:"Courier New",monospace;font-size:45px;color:var(--accent);letter-spacing:2px;line-height:1;margin:16px 0 8px}.score-bottom{display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:9px;color:#768570;line-height:1.4}.score-bottom button{font-size:17px;padding:5px 0 5px 8px;color:var(--accent)}.control-guide{margin:37px 0 29px;padding-bottom:24px;border-bottom:1px solid #30382c}.arrow-keys{display:grid;grid-template-columns:repeat(3,31px);grid-template-rows:repeat(2,28px);gap:4px;margin:18px 0 13px}.arrow-keys .up{grid-column:2}.arrow-keys kbd:nth-child(2){grid-row:2;grid-column:1}.arrow-keys kbd:nth-child(3){grid-row:2;grid-column:2}.arrow-keys kbd:nth-child(4){grid-row:2;grid-column:3}kbd{font:10px monospace;border:1px solid #3a4534;border-bottom:2px solid #45523d;border-radius:4px;padding:3px 6px;color:#a6b899;background:#1d251b;white-space:nowrap}.arrow-keys kbd{font:16px sans-serif;display:flex;align-items:center;justify-content:center}.control-guide p{font-size:10px;line-height:1.8;color:var(--muted);margin:10px 0 20px}.control-guide p b{font-weight:450;color:#b6c2aa}.shortcut-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:9px;color:#839078}.run-card .section-label{margin-bottom:19px}.run-card>div:not(:first-child){display:flex;justify-content:space-between;margin:12px 0;font-size:10px;color:#87947b}.run-card b{font-weight:500;color:#c1ccb5}.run-card>button{display:flex;align-items:center;gap:8px;color:#acbe98;font-size:9px;padding:8px 0}.run-card>button svg{width:14px;height:14px}.site-footer{max-width:1344px;margin:auto;padding:23px 0 26px;border-top:1px solid #282f26;display:flex;align-items:center;justify-content:space-between;color:#65705f;font-size:9px;gap:24px}.site-footer i{font-style:normal;margin:0 7px}.site-footer button{font-size:9px;color:#91a17f;padding:6px 0}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.toast{position:fixed;bottom:max(26px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#d5e9b8;color:#26381f;box-shadow:0 10px 40px #0008;z-index:20;border-radius:9px;padding:13px 20px;font-size:12px;max-width:90vw;text-align:center}.toast[hidden]{display:none}
+dialog{color:var(--text);background:#191f19;border:1px solid #3a4932;border-radius:23px;padding:0;width:min(480px,calc(100vw - 24px));max-height:90svh;box-shadow:0 30px 100px #000c;overflow:hidden}dialog[open]{display:flex;flex-direction:column}dialog::backdrop{background:#060a07b8;backdrop-filter:blur(8px)}.dialog-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:27px 27px 19px;border-bottom:1px solid #303b2a;flex-shrink:0}.dialog-header h2{font-size:23px;font-weight:500;letter-spacing:-.7px;margin:9px 0 0}.dialog-header .icon-button{margin:-5px -8px 0 0;flex-shrink:0}.dialog-body{padding:23px 27px;overflow-y:auto;overscroll-behavior:contain}.setting-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;margin-bottom:15px}.setting-heading:not(:first-child){margin-top:25px}.setting-heading output{font:12px monospace;color:var(--accent)}.setting-heading small{font-size:9px;color:var(--muted)}input[type=range]{accent-color:var(--accent);width:100%;height:20px;cursor:pointer;margin:0}.range-captions{display:flex;justify-content:space-between;color:#839477;font-size:9px;margin-top:8px}.maze-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.maze-option{background:#222b1f;padding:10px;border:1px solid #38452f;border-radius:9px;color:#91a77e;font-size:10px}.maze-option[aria-pressed=true]{border-color:var(--accent);color:var(--accent);background:#2f3e26;box-shadow:0 0 0 1px #bfdc9522}.maze-option svg{display:block;width:100%;height:37px;stroke:none;fill:currentColor;margin-bottom:7px}.segmented{display:flex;gap:4px;padding:4px;background:#10170f;border:1px solid #2e3928;border-radius:10px}.segmented button{flex:1;padding:10px 3px;font-size:11px;color:#8c9c81;border-radius:7px}.segmented button[aria-pressed=true]{background:#34452a;color:var(--accent);box-shadow:0 2px 4px #0003}.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #2b3526;padding:16px 0}.toggle-row label{font-size:12px;cursor:pointer}.toggle-row p{font-size:10px;line-height:1.5;color:#809175;margin:5px 0 0}input[type=checkbox]{appearance:none;-webkit-appearance:none;width:36px;height:21px;border-radius:30px;background:#3a4434;position:relative;flex-shrink:0;cursor:pointer;transition:background .15s}input[type=checkbox]:after{content:"";position:absolute;width:15px;height:15px;top:3px;left:3px;background:#b4bea8;border-radius:50%;transition:transform .15s}input[type=checkbox]:checked{background:#9eba7c}input[type=checkbox]:checked:after{background:#1e3019;transform:translateX(15px)}.renderer-info{font:9px/1.8 monospace;color:#7d926e;border-radius:7px;background:#131b11;margin-top:23px;padding:10px 12px;overflow-wrap:anywhere}.dialog-footer{display:flex;align-items:center;justify-content:space-between;gap:20px;border-top:1px solid #303b2a;padding:17px 27px;flex-shrink:0}.dialog-footer>span{font-size:10px;color:#839577}.small-primary{border-radius:8px;padding:11px 17px;font-size:11px;font-weight:600;background:var(--accent);color:#25361c}.text-button{padding:9px 0;font-size:11px;color:#b5cc9e}.dialog-copy{font-size:12px;line-height:1.8;color:#a0ae94;margin:0 0 20px}.score-entry{display:grid;grid-template-columns:22px 1fr auto;gap:14px;align-items:center;border-top:1px solid #324029;padding:15px 0}.score-rank{font:12px monospace;color:#728963}.score-value{font:23px monospace;color:var(--accent)}.score-details{font-size:9px;line-height:1.8;color:#839775;text-align:right}.score-empty{text-align:center;padding:25px 0 40px;color:#92a580;line-height:2;font-size:13px}.about-copy h3{font-size:13px;font-weight:600;margin:3px 0 7px;color:var(--accent)}.about-copy p{font-size:12px;line-height:1.9;color:#a2b297;margin:0 0 23px}.about-copy .fine-print{font-size:10px;color:#798e6b;margin-bottom:0}.noscript{position:fixed;inset:0;background:var(--bg);display:grid;place-items:center;padding:30px;text-align:center}
+body.focus-mode .intro,body.focus-mode .sidebar,body.focus-mode .site-footer,body.focus-mode .phone-top,body.focus-mode .keypad,body.focus-mode .phone-navigation,body.focus-mode .phone-chin,body.focus-mode .bezel-caption,body.focus-mode .below-phone{display:none}body.focus-mode .layout{display:flex;justify-content:center;min-height:calc(100svh - 96px);padding:0 20px 25px}body.focus-mode .game-column{width:min(760px,100%)}body.focus-mode .phone{width:100%;padding:0;background:none;border:none;box-shadow:none;border-radius:0}body.focus-mode .phone:before,body.focus-mode .phone:after{display:none}body.focus-mode .screen-bezel{padding:12px;border:1px solid #344a2b;border-radius:13px;background:#192215;margin:0;box-shadow:0 12px 60px #0004}body.focus-mode .thumbpad{display:grid;grid-template:repeat(3,57px)/repeat(3,68px);margin:20px auto 0;gap:6px}body.focus-mode .focus-actions{display:flex;justify-content:center;gap:24px;width:100%;margin-top:24px}body.focus-mode .focus-actions button{font-size:11px;min-height:42px;border:1px solid #3d4d32;border-radius:8px;padding:10px 16px;color:#b4c59f;touch-action:none}body.focus-mode .swipe-hint{display:block;font-size:10px;color:#7c906a}
+@media(min-width:1600px){.layout{column-gap:88px;max-width:1370px;grid-template-columns:1fr 400px 1fr}.phone{width:366px;padding:31px 27px 29px}.keypad button{min-height:48px}.keypad{gap:12px}.phone-navigation{height:73px}.sidebar{max-width:238px}}
+@media(max-width:1200px){.layout{column-gap:35px;grid-template-columns:1fr 340px 1fr;padding:18px 35px 35px}.site-footer{margin:0 35px}.site-header{padding:24px 35px}.intro h1{font-size:35px}.sidebar{max-width:200px}.intro-meta{gap:5px;font-size:6px}.intro-copy{font-size:11px}}
+@media(max-width:980px){.layout{grid-template-columns:1fr 350px;max-width:800px;column-gap:45px}.sidebar{display:none}.intro h1{font-size:42px}.intro-meta{font-size:7px;gap:8px}.site-footer{font-size:8px}.site-footer>span:first-child{display:none}}
+@media(max-width:640px){.site-header{padding:13px 17px 14px;gap:7px}.brand{gap:9px}.brand strong{font-size:15px;letter-spacing:2px}.brand-mark{transform:scale(.8);width:21px}.edition{font-size:7px;padding-left:9px;letter-spacing:.7px}.header-actions{gap:1px}.icon-button{width:34px;height:34px}.icon-button svg{width:18px;height:18px}.engine-badge{display:none}.layout{display:flex;flex-direction:column;padding:18px 12px 22px;min-height:0;gap:24px}.intro{display:none}.game-column{width:100%}.phone{width:min(340px,calc(100vw - 42px))}.below-phone{width:min(326px,calc(100vw - 54px));margin-top:19px;font-size:9px}.below-phone button{font-size:9px}.swipe-hint{display:block;font-size:9px;margin:9px 0 0;color:#617655}.site-footer{margin:0 22px;padding:17px 0 calc(17px + env(safe-area-inset-bottom));font-size:8px;justify-content:center;text-align:center;gap:12px;flex-wrap:wrap}.site-footer button{font-size:8px}.site-footer>span{font-size:8px}.dialog-header{padding:23px 22px 17px}.dialog-header h2{font-size:22px}.dialog-body{padding:20px 22px}.dialog-footer{padding:17px 22px}.dialog-header .eyebrow{font-size:8px}.setting-heading{font-size:12px}.toggle-row p{font-size:9px}body.focus-mode .layout{min-height:calc(100svh - 62px);justify-content:flex-start;padding:20px 12px 15px}body.focus-mode .phone{width:100%}body.focus-mode .game-column{margin:auto 0}body.focus-mode .thumbpad{grid-template:repeat(3,63px)/repeat(3,75px);margin-top:25px}body.focus-mode .focus-actions{gap:12px;margin-top:22px}body.focus-mode .focus-actions button{font-size:10px;padding:10px 13px}body.focus-mode .swipe-hint{margin-top:13px}}
+@media(max-width:380px){.edition{display:none}.phone{padding:23px 21px 20px}.phone-top{height:60px}.keypad{gap:9px 10px}.keypad button{min-height:41px}.phone-navigation{height:62px;gap:15px}.phone-wordmark{font-size:21px}.screen-bezel{padding:10px 9px 0}}
+@media(max-width:640px) and (max-height:740px){.layout{padding-top:7px}.phone{width:min(315px,calc(100vw - 42px));padding-top:22px;padding-bottom:20px}.phone-top{height:54px}.speaker{margin-bottom:11px}.keypad button{min-height:40px}.keypad{gap:9px 10px}.phone-navigation{height:62px}.below-phone{margin-top:13px}.swipe-hint{margin-top:6px}}
+@media(orientation:landscape) and (max-height:560px){.layout{padding-top:4px}.site-header{padding-top:9px;padding-bottom:9px}body.focus-mode .game-column{width:100%;display:grid;grid-template-columns:minmax(250px,1fr) 120px;gap:15px;align-items:center}body.focus-mode .phone{display:grid;grid-template-columns:minmax(220px,1fr) 180px;align-items:center;gap:24px}body.focus-mode .thumbpad{grid-template:repeat(3,44px)/repeat(3,51px);margin:0}body.focus-mode .focus-actions{flex-direction:column;gap:10px;margin:0}body.focus-mode .swipe-hint{grid-column:1/3;text-align:center}body.focus-mode .layout{min-height:calc(100svh - 55px);padding:4px 24px 10px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+
+</style>
+  <style>
+/* Nokia 3310 front projection. Coordinate space: 480 × 1130.
+   The silhouette, lens, trim and keypad share one immutable coordinate system.
+   Enlarged, non-overlapping HTML hit boxes are independent of physical key caps. */
+.game-column { position:relative; }
+#phone {
+  container-type:inline-size; width:310px; aspect-ratio:480/1130; height:auto;
+  padding:0; border:0; border-radius:0; background:none; box-shadow:none;
+  isolation:isolate; flex-shrink:0; filter:drop-shadow(1px 3px 2px #0009) drop-shadow(8px 25px 24px #0007);
+}
+#phone::before,#phone::after { display:none; }
+#phone .handset-shell { display:block; position:absolute; inset:0; width:100%; height:100%; stroke:none; pointer-events:none; }
+#phone .screen-bezel {
+  position:absolute; left:15.65%; top:26.5%; width:68.7%; height:21.4%;
+  border:none; background:none; border-radius:0; padding:0; margin:0; box-shadow:none;
+}
+#phone .screen-wrap {
+  width:100%; height:100%; aspect-ratio:30/22; border:0; border-radius:3.2% / 3%;
+  background:#9aab71; box-shadow:0 0 0 1px #070f13,0 1px 1px #bbc09b55;
+  overflow:hidden; touch-action:none; position:relative;
+}
+#phone .screen-wrap::after {
+  border-radius:inherit; box-shadow:inset 0 3px 4px #1a271e9c,inset 2px 0 2px #26342355,inset -1px -1px 2px #1727136b;
+  background:linear-gradient(168deg,#ffffff05 0%,transparent 45%); pointer-events:none;
+}
+#phone #lcd { width:100%; height:100%; image-rendering:auto; display:block; }
+#phone .phone-navigation { display:contents; }
+#phone .nav-select,#phone .nav-back,#phone .nav-scroll {
+  position:absolute; margin:0; padding:0; transform:none; box-shadow:none; border:0;
+  color:#14282c; background:none; touch-action:none;
+}
+#phone .nav-select {
+  left:30.7%; top:54.7%; width:38.6%; height:4.95%;
+  display:flex; justify-content:center; align-items:center; border-radius:25% 25% 50% 50% / 20% 20% 88% 88%;
+  background:linear-gradient(174deg,#e6e5dc 0%,#d2d5c9 40%,#9aa6a0 100%);
+  border:1px solid #21323b; box-shadow:inset 0 1px 1px #fffb,0 1px 0 #0b1523;
+}
+#phone .select-stripe { width:48%; height:12%; border-radius:0 0 50% 50% / 0 0 80% 80%; background:#4c99a0; box-shadow:0 1px 0 #e8f4e999; transform:translateY(-3%); }
+#phone .nav-select #softkey-label { position:absolute; clip:rect(0,0,0,0); width:1px; height:1px; overflow:hidden; }
+#phone .nav-back {
+  left:16.1%; top:57.75%; width:16.2%; height:6.65%;
+  clip-path:polygon(31% 0,100% 54%,65% 100%,40% 87%,0 39%);
+  border-radius:13%; background:linear-gradient(137deg,#e0e0d6,#b2bbb3);
+  box-shadow:inset 0 1px 1px #fff9;
+}
+#phone .nav-back span { display:block; transform:rotate(34deg) translate(-1px,1px); font:italic 500 6cqw/1 Georgia,serif; }
+#phone .nav-scroll { left:57.8%; top:57.4%; width:25.5%; height:8.05%; overflow:visible; border-radius:0; }
+#phone .nav-scroll button { position:absolute; width:100%; height:100%; font:500 6.3cqw/1 Arial,sans-serif; padding:0; color:#15282c; background:linear-gradient(160deg,#d6d9cf,#acb6ae); }
+#phone .nav-scroll button[data-nav=up] { clip-path:polygon(84% 0,100% 31%,55% 78%,15% 53%); }
+#phone .nav-scroll button[data-nav=down] { clip-path:polygon(12% 57%,54% 81%,39% 92%,4% 100%,0 68%); }
+#phone .nav-scroll button[data-nav=up] span { position:absolute; top:21%; right:13%; transform:none; }
+#phone .nav-scroll button[data-nav=down] span { position:absolute; bottom:7%; left:6%; transform:none; }
+#phone .nav-scroll button:first-child { border:none; }
+#phone .keypad { display:contents; padding:0; margin:0; }
+#phone .keypad>button {
+  position:absolute; left:var(--kx); top:var(--ky); width:25%; height:7.25%;
+  min-height:0; margin:0; padding:0; transform:translate(-50%,-50%);
+  border-radius:20%; background:none; color:#17252b; border:0; box-shadow:none;
+  display:flex; align-items:center; justify-content:center; touch-action:none;
+  transition:none; -webkit-tap-highlight-color:transparent;
+}
+#phone .keypad>button .key-cap {
+  display:flex; align-items:baseline; justify-content:center; gap:3%; width:89%; height:62%;
+  transform:rotate(var(--key-angle)); border-radius:49% 49% 48% 48% / 47% 47% 54% 54%;
+  background:linear-gradient(168deg,#ecebe2 0%,#d5d7cc 27%,#c6ccbf 59%,#95a598 100%);
+  border:1px solid #bec6bc; box-shadow:inset 0 1px 1px #ffffffe6,inset 0 -1px 1px #34463f77,0 2px 2px #0009;
+  color:#18252b; padding:2% 0 0; line-height:1;
+}
+#phone .keypad strong { font:500 6.3cqw/1.18 Arial,sans-serif; text-shadow:0 1px #faf9e466; letter-spacing:-.5px; }
+#phone .keypad .key-cap>span { font:600 2.55cqw/1 Arial,sans-serif; color:inherit; align-self:auto; letter-spacing:-.03em; }
+#phone .keypad>button:nth-child(3n) .key-cap { flex-direction:row-reverse; }
+#phone .keypad>button:nth-child(10) .key-cap>span,#phone .keypad>button:nth-child(12) .key-cap>span { font-size:3cqw; }
+#phone .keypad>button:nth-child(11) .key-cap>span { font-size:4cqw; }
+#phone .keypad>button:nth-child(5) .key-cap::after { content:'·'; position:absolute; left:12%; top:30%; font-size:4cqw; color:#e7ebe1; text-shadow:0 1px #6c7b6c; }
+#phone .keypad>button:hover { filter:none; }
+#phone .keypad>button:active,#phone .keypad>button.pressed { translate:0 0; box-shadow:none; filter:none; }
+#phone .keypad>button:active .key-cap,#phone .keypad>button.pressed .key-cap { transform:translateY(1.5px) rotate(var(--key-angle)); filter:brightness(.91); box-shadow:inset 0 1px 2px #607c5c77; }
+#phone .nav-select:active,#phone .nav-select.pressed,#phone .nav-back:active,#phone .nav-back.pressed,#phone .nav-scroll button:active,#phone .nav-scroll button.pressed { translate:0 1px; filter:brightness(.9); }
+#phone .power-key { position:absolute; left:40%; top:-.3%; width:20%; height:1.15%; min-height:8px; border-radius:50% 50% 0 0; border:1px solid #5c666d; background:linear-gradient(#434f5a,#152334); z-index:-1; }
+body[data-backlight="on"] #phone .key-cap,body[data-backlight="on"] #phone .nav-back,body[data-backlight="on"] #phone .nav-scroll button { color:#5b9b28; text-shadow:0 0 2px #a3e43840; }
+body[data-backlight="on"] #phone .key-cap { background:linear-gradient(168deg,#e1e5d3,#c6d0b7 50%,#94aa82); }
+body[data-backlight="on"] #phone .keypad strong,body[data-backlight="on"] #phone .nav-scroll button { color:inherit; }
+body[data-backlight="on"] #phone .select-stripe { background:#66ca48; box-shadow:0 0 4px #83da6630; }
+.game-column>.thumbpad { margin:20px auto 0; flex-shrink:0; }
+.below-phone { width:310px; max-width:100%; margin-top:20px; }
+.swipe-hint { display:block; font-size:10px; color:#77846b; margin:8px 0 0; }
+body.focus-mode #phone { width:100%; aspect-ratio:30/22; filter:none; display:block; }
+body.focus-mode #phone .handset-shell,body.focus-mode #phone .phone-navigation,body.focus-mode #phone .keypad,body.focus-mode #phone .power-key { display:none; }
+body.focus-mode #phone .screen-bezel { inset:0; width:100%; height:100%; margin:0; padding:8px; background:#1c2b22; border:1px solid #4d5b3d; border-radius:8px; }
+body.focus-mode #phone .screen-wrap { border-radius:3px; }
+body.focus-mode .game-column { width:min(650px,100%); }
+body.focus-mode .game-column>.thumbpad { display:grid; }
+@media(min-width:1600px){#phone{width:330px}}
+@media(max-width:640px){
+ #phone{width:clamp(260px,calc((100svh - 162px) * .42478),300px);max-width:calc(100vw - 36px)}
+ .layout{padding-top:9px;padding-bottom:10px}.below-phone{width:290px;max-width:calc(100vw - 34px);margin-top:13px}
+ .site-footer{padding-top:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+ .game-column>.thumbpad{grid-template:repeat(3,58px)/repeat(3,70px)}
+ body.focus-mode #phone{width:100%;max-width:none;aspect-ratio:30/22}
+ body.focus-mode .layout{min-height:0;padding-top:10px}
+ body.focus-mode .game-column>.thumbpad{margin-top:18px}
+}
+@media(orientation:landscape) and (max-height:560px){
+ body.focus-mode .game-column{display:grid;grid-template-columns:minmax(230px,1fr) 185px;gap:12px;width:100%}
+ body.focus-mode #phone{width:100%;height:min(67svh,320px);aspect-ratio:auto}
+ body.focus-mode #phone .screen-bezel{position:relative;width:auto;height:100%;aspect-ratio:30/22;max-width:100%;margin:auto}
+ body.focus-mode .game-column>.thumbpad{grid-column:2;grid-row:1;grid-template:repeat(3,46px)/repeat(3,54px);margin:0}
+ body.focus-mode .focus-actions{grid-column:1/3;flex-direction:row;gap:15px;justify-content:center;margin:0}
+ body.focus-mode .swipe-hint{display:none}
+}
+@media(forced-colors:active){#phone .key-cap,#phone .nav-select{border:1px solid ButtonText}.handset-shell{forced-color-adjust:none}.screen-wrap{forced-color-adjust:none}}
+#phone .handset-shell { filter:brightness(var(--case-light,1)); }
+/* One-piece sculpted navigation key graphics live in SVG; HTML supplies generous hit areas. */
+#phone .nav-back {left:18.5%;top:56.8%;width:18.5%;height:7.2%;clip-path:none;border-radius:20%;background:transparent;box-shadow:none}
+#phone .nav-back span,#phone .nav-scroll span {visibility:hidden}
+#phone .nav-scroll {left:57.8%;top:56.5%;width:27%;height:9%;background:none}
+#phone .nav-scroll button[data-nav=up] {left:42%;top:0;width:58%;height:64%;clip-path:none;background:transparent}
+#phone .nav-scroll button[data-nav=down] {left:0;top:43%;width:57%;height:57%;clip-path:none;background:transparent}
+#phone:has(.nav-back.pressed) .c-cap,#phone:has(.nav-scroll .pressed) .rocker-cap {filter:brightness(.84)}
+
+</style>
+</head>
+<body>
+  <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-sound" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM16 9l6 6m0-6-6 6"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><path d="M8 3v6m8 0v6M9 15v6"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-cup" viewBox="0 0 24 24"><path d="M8 3h8v7a4 4 0 0 1-8 0zM8 5H4v3a4 4 0 0 0 4 4m8-7h4v3a4 4 0 0 1-4 4m-4 2v5m-4 2h8"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 9h1m3 0h1m3 0h2M7 12h1m3 0h1m3 0h2M8 15h8"/></symbol>
+  </defs></svg>
+  <header class="site-header">
+    <a href="./" class="brand" aria-label="Snake 3310 home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><strong>SNAKE</strong><span class="edition">3310 EDITION</span></a>
+    <div class="header-actions">
+      <span id="renderer-badge" class="engine-badge"><span></span><b>Starting</b></span>
+      <button class="icon-button" id="sound-button" aria-label="Mute sound" title="Sound · M"><svg><use href="#i-sound"/></svg></button>
+      <button class="icon-button" id="focus-button" aria-label="Enter focus mode" aria-pressed="false" title="Focus mode · F"><svg><use href="#i-expand"/></svg></button>
+      <button class="icon-button" id="settings-button" aria-label="Open settings" title="Settings"><svg><use href="#i-settings"/></svg></button>
+    </div>
+  </header>
+  <main class="layout">
+    <section class="intro" aria-labelledby="page-title">
+      <div class="eyebrow"><span class="tiny-square"></span> THE ORIGINAL DISTRACTION</div>
+      <h1 id="page-title">Small screen.<br>Endless <em>one<br>more game.</em></h1>
+      <p class="intro-copy">Back to a simpler kind of screen time.<br>Just you, a few pixels, and a growing problem.</p>
+      <button class="start-button" id="new-game-button"><span id="start-label">Let’s play</span><svg><use href="#i-arrow"/></svg></button>
+      <div class="intro-meta"><span>NO ADS</span><i></i><span>NO ACCOUNT</span><i></i><span>JUST SNAKE</span></div>
+      <div class="specimen"><span>84 × 48</span><p>one-bit pixels. Nothing superfluous.</p><div class="specimen-line"></div><span class="specimen-small">REFLECTIVE LCD / THE YEAR 2000</span></div>
+    </section>
+
+    <section class="game-column" aria-label="Snake game">
+      <div class="phone" id="phone">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 1130" class="handset-shell" aria-hidden="true">
+<defs>
+ <linearGradient id="body-edge" x1="0" x2="1"><stop stop-color="#0c1520"/><stop offset=".035" stop-color="#73808b"/><stop offset=".07" stop-color="#1c2b3c"/><stop offset=".9" stop-color="#111d2c"/><stop offset=".98" stop-color="#3b4651"/><stop offset="1" stop-color="#060e17"/></linearGradient>
+ <linearGradient id="navy" x1="0" y1="0" x2=".94" y2=".4"><stop stop-color="#36465c"/><stop offset=".16" stop-color="#2e3e53"/><stop offset=".62" stop-color="#233145"/><stop offset=".88" stop-color="#1d293a"/><stop offset="1" stop-color="#101e30"/></linearGradient>
+ <linearGradient id="face" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#34455a"/><stop offset=".36" stop-color="#26364b"/><stop offset=".82" stop-color="#1c2a3c"/><stop offset="1" stop-color="#25354a"/></linearGradient>
+ <linearGradient id="silver" x1="0" y1=".2" x2="1" y2=".65"><stop stop-color="#a1a7aa"/><stop offset=".075" stop-color="#e0dfd7"/><stop offset=".24" stop-color="#bdbfb9"/><stop offset=".5" stop-color="#c8c9c1"/><stop offset=".84" stop-color="#b7bab7"/><stop offset="1" stop-color="#7a858b"/></linearGradient>
+ <linearGradient id="glass-rim" x1="0" y1="0" x2=".6" y2="1"><stop stop-color="#091422"/><stop offset=".08" stop-color="#526070"/><stop offset=".12" stop-color="#101b27"/><stop offset=".85" stop-color="#1b2936"/><stop offset="1" stop-color="#283a49"/></linearGradient>
+ <linearGradient id="hole" x2=".4" y2="1"><stop stop-color="#00070e"/><stop offset="1" stop-color="#182635"/></linearGradient>
+ <linearGradient id="key-well" x2=".2" y2="1"><stop stop-color="#050d17"/><stop offset=".7" stop-color="#070e16"/><stop offset="1" stop-color="#73808a"/></linearGradient>
+ <filter id="plastic-grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".83" numOctaves="2" seed="3310" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".16"/></feComponentTransfer><feComposite in2="SourceGraphic" operator="in"/></filter>
+ <clipPath id="shell-clip"><path d="M101 17 C161 6 319 6 379 17 C418 24 432 55 443 123 C459 236 468 386 468 540 L460 857 C457 953 448 1043 428 1080 C412 1104 362 1117 240 1118 C118 1117 68 1104 52 1080 C32 1043 23 953 20 857 L12 540 C12 386 21 236 37 123 C48 55 62 24 101 17Z"/></clipPath>
+</defs>
+<path d="M97 10 C155 -1 325 -1 383 10 C425 18 442 53 451 114 C468 227 477 372 477 540 L470 857 C468 955 456 1049 436 1088 C423 1113 379 1124 240 1128 C101 1124 57 1113 44 1088 C24 1049 12 955 10 857 L3 540 C3 372 12 227 29 114 C38 53 55 18 97 10Z" fill="url(#body-edge)"/>
+<path d="M101 17 C161 6 319 6 379 17 C418 24 432 55 443 123 C459 236 468 386 468 540 L460 857 C457 953 448 1043 428 1080 C412 1104 362 1117 240 1118 C118 1117 68 1104 52 1080 C32 1043 23 953 20 857 L12 540 C12 386 21 236 37 123 C48 55 62 24 101 17Z" fill="url(#navy)" stroke="#657587" stroke-opacity=".35" stroke-width="1.4"/>
+<path d="M103 22 C161 11 319 11 377 22 C407 30 420 60 429 124 C443 215 449 331 444 449 C440 550 420 624 379 674 C342 716 298 736 240 739 C182 736 138 716 101 674 C60 624 40 550 36 449 C31 331 37 215 51 124 C60 60 73 30 103 22Z" fill="url(#silver)" stroke="#111e2d" stroke-width="2.4"/>
+<path d="M103 22 C161 11 319 11 377 22 C407 30 420 60 429 124 C443 215 449 331 444 449 C440 550 420 624 379 674 C342 716 298 736 240 739 C182 736 138 716 101 674 C60 624 40 550 36 449 C31 331 37 215 51 124 C60 60 73 30 103 22Z" fill="none" stroke="#f2f3e7" stroke-opacity=".48" stroke-width="1" transform="translate(0 -1)"/>
+<path d="M111 34 C166 25 314 25 369 34 C395 40 404 65 414 130 C427 219 430 333 426 448 C423 525 408 577 374 612 C341 644 294 662 240 665 C186 662 139 644 106 612 C72 577 57 525 54 448 C50 333 53 219 66 130 C76 65 85 40 111 34Z" fill="url(#face)" stroke="#0b1827" stroke-width="2.3"/>
+<path d="M111 36 C166 27 314 27 369 36" fill="none" stroke="#99a5ae" stroke-opacity=".3" stroke-width="1.5"/>
+<g clip-path="url(#shell-clip)" opacity=".42"><path d="M101 17 C161 6 319 6 379 17 C418 24 432 55 443 123 C459 236 468 386 468 540 L460 857 C457 953 448 1043 428 1080 C412 1104 362 1117 240 1118 C118 1117 68 1104 52 1080 C32 1043 23 953 20 857 L12 540 C12 386 21 236 37 123 C48 55 62 24 101 17Z" fill="#fff" filter="url(#plastic-grain)"/></g>
+<ellipse cx="240" cy="63.8" rx="8.2" ry="5.5" fill="#687583" opacity=".48"/><ellipse cx="240" cy="62" rx="8.1" ry="5.3" fill="url(#hole)"/><path d="M233 61Q240 57 247 61" fill="none" stroke="#01060c" stroke-width="1.6"/>
+<ellipse cx="240" cy="84.8" rx="8.2" ry="5.5" fill="#687583" opacity=".48"/><ellipse cx="240" cy="83" rx="8.1" ry="5.3" fill="url(#hole)"/><path d="M233 82Q240 78 247 82" fill="none" stroke="#01060c" stroke-width="1.6"/>
+<ellipse cx="240" cy="105.8" rx="8.2" ry="5.5" fill="#687583" opacity=".48"/><ellipse cx="240" cy="104" rx="8.1" ry="5.3" fill="url(#hole)"/><path d="M233 103Q240 99 247 103" fill="none" stroke="#01060c" stroke-width="1.6"/>
+<ellipse cx="240" cy="126.8" rx="8.2" ry="5.5" fill="#687583" opacity=".48"/><ellipse cx="240" cy="125" rx="8.1" ry="5.3" fill="url(#hole)"/><path d="M233 124Q240 120 247 124" fill="none" stroke="#01060c" stroke-width="1.6"/>
+<ellipse cx="240" cy="147.8" rx="8.2" ry="5.5" fill="#687583" opacity=".48"/><ellipse cx="240" cy="146" rx="8.1" ry="5.3" fill="url(#hole)"/><path d="M233 145Q240 141 247 145" fill="none" stroke="#01060c" stroke-width="1.6"/>
+<ellipse cx="240" cy="168.8" rx="8.2" ry="5.5" fill="#687583" opacity=".48"/><ellipse cx="240" cy="167" rx="8.1" ry="5.3" fill="url(#hole)"/><path d="M233 166Q240 162 247 166" fill="none" stroke="#01060c" stroke-width="1.6"/>
+<path d="M166 222H314V251H166Z" fill="#122132" stroke="#52606b" stroke-width="1"/>
+<g fill="#e8ede8" transform="translate(174 227)">
+ <path d="M0 0H6L17 12V0H23V19H17L6 7V19H0Z"/>
+ <path fill-rule="evenodd" d="M28 0H51V19H28ZM34 5V14H45V5Z"/>
+ <path d="M56 0H62V7L72 0H81L69 9L82 19H72L62 11V19H56Z"/>
+ <path d="M86 0H92V19H86Z"/>
+ <path fill-rule="evenodd" d="M105 0H115L126 19H119L117 15H103L101 19H94ZM110 4L106 10H114Z"/>
+</g>
+<!-- Recessed clear lens, above the polarizer and active LCD aperture. -->
+<path d="M77 284Q240 278 403 284Q417 284 416 303L410 554Q409 569 396 570Q240 580 84 570Q71 569 70 554L64 303Q63 284 77 284Z" fill="url(#glass-rim)" stroke="#111d29" stroke-width="3"/>
+<path d="M80 291Q240 285 400 291" fill="none" stroke="#bbc3b2" stroke-opacity=".28" stroke-width="2"/>
+<path d="M77 567Q240 580 404 567" fill="none" stroke="#7c898c" stroke-opacity=".5" stroke-width="2"/>
+<!-- Navi key recess and asymmetric C/scroll key bed. -->
+<path d="M146 623Q240 607 334 623Q317 668 240 675Q163 668 146 623Z" fill="#0a1722" stroke="#67717a" stroke-width="2"/>
+<path d="M108 647Q133 666 163 677L147 708Q117 694 93 667Z" fill="#10212b" stroke="#17252d" stroke-width="3"/>
+<path class="c-cap" d="M109 648Q134 667 161 678L146 706Q118 692 95 667Z" fill="url(#silver)" stroke="#d4d8cf" stroke-width="1"/>
+<path d="M131 670C121 659 111 669 120 680Q124 685 130 681" fill="none" stroke="#192b2d" stroke-width="3" stroke-linecap="round"/>
+<path d="M369 642L389 665Q350 710 285 730L279 683Q334 671 369 642Z" fill="#12232c" stroke="#1a292e" stroke-width="3"/>
+<path class="rocker-cap" d="M369 644L386 665Q349 709 286 727L281 684Q335 673 369 644Z" fill="url(#silver)" stroke="#d1d6cf" stroke-width="1"/>
+<g fill="none" stroke="#203234" stroke-width="3.3" stroke-linecap="round" stroke-linejoin="round"><path d="M350 668L364 657L364 671M364 657L350 658"/><path d="M308 698L297 710L297 697M297 710L311 709"/></g>
+<ellipse cx="116" cy="793" rx="57" ry="30" fill="url(#key-well)" transform="rotate(15 116 791)"/>
+<ellipse cx="240" cy="805" rx="57" ry="30" fill="url(#key-well)" transform="rotate(0 240 803)"/>
+<ellipse cx="364" cy="793" rx="57" ry="30" fill="url(#key-well)" transform="rotate(-15 364 791)"/>
+<ellipse cx="116" cy="878" rx="57" ry="30" fill="url(#key-well)" transform="rotate(15 116 876)"/>
+<ellipse cx="240" cy="890" rx="57" ry="30" fill="url(#key-well)" transform="rotate(0 240 888)"/>
+<ellipse cx="364" cy="878" rx="57" ry="30" fill="url(#key-well)" transform="rotate(-15 364 876)"/>
+<ellipse cx="116" cy="963" rx="57" ry="30" fill="url(#key-well)" transform="rotate(15 116 961)"/>
+<ellipse cx="240" cy="975" rx="57" ry="30" fill="url(#key-well)" transform="rotate(0 240 973)"/>
+<ellipse cx="364" cy="963" rx="57" ry="30" fill="url(#key-well)" transform="rotate(-15 364 961)"/>
+<ellipse cx="116" cy="1048" rx="57" ry="30" fill="url(#key-well)" transform="rotate(15 116 1046)"/>
+<ellipse cx="240" cy="1060" rx="57" ry="30" fill="url(#key-well)" transform="rotate(0 240 1058)"/>
+<ellipse cx="364" cy="1048" rx="57" ry="30" fill="url(#key-well)" transform="rotate(-15 364 1046)"/>
+<ellipse cx="240" cy="1080" rx="4" ry="2.2" fill="#050c13"/><path d="M78 1090Q240 1120 402 1090" fill="none" stroke="#687587" stroke-opacity=".22" stroke-width="1"/>
+</svg>
+        <button id="power-button" class="power-key" aria-label="Toggle LCD backlight" title="LCD backlight"></button>
+        <div class="screen-bezel">
+          <div class="screen-wrap" id="screen-wrap" tabindex="0" role="group" aria-label="Snake II. Swipe to steer. Tap to play or pause.">
+            <canvas id="lcd" width="672" height="492" role="img" aria-label="Snake II title screen"></canvas>
+          </div>
+        </div>
+        <div class="phone-navigation">
+          <button class="nav-back" id="back-button" aria-label="Open game menu or go back" title="Menu / Back · Escape"><span>C</span></button>
+          <button class="nav-select" id="select-button" aria-label="Play Snake"><span class="select-stripe"></span><span id="softkey-label" class="sr-only">Play</span></button>
+          <div class="nav-scroll"><button data-nav="up" aria-label="Previous menu item"><span>↗</span></button><button data-nav="down" aria-label="Next menu item"><span>↙</span></button></div>
+        </div>
+        <div class="keypad" id="keypad" aria-label="Classic phone keypad">
+<button data-key="1" aria-label="Show instructions" style="--kx:24.1667%;--ky:70.0000%;--key-angle:15deg"><span class="key-cap"><strong>1</strong><span>♧</span></span></button>
+<button data-dir="0" aria-label="Steer up" style="--kx:50.0000%;--ky:71.0619%;--key-angle:0deg"><span class="key-cap"><strong>2</strong><span>abc</span></span></button>
+<button data-key="3" aria-label="Open game settings" style="--kx:75.8333%;--ky:70.0000%;--key-angle:-15deg"><span class="key-cap"><strong>3</strong><span>def</span></span></button>
+<button data-dir="3" aria-label="Steer left" style="--kx:24.1667%;--ky:77.5221%;--key-angle:15deg"><span class="key-cap"><strong>4</strong><span>ghi</span></span></button>
+<button data-boost="true" aria-label="Hold to move faster" style="--kx:50.0000%;--ky:78.5841%;--key-angle:0deg"><span class="key-cap"><strong>5</strong><span>jkl</span></span></button>
+<button data-dir="1" aria-label="Steer right" style="--kx:75.8333%;--ky:77.5221%;--key-angle:-15deg"><span class="key-cap"><strong>6</strong><span>mno</span></span></button>
+<button data-key="7" aria-label="Show top scores" style="--kx:24.1667%;--ky:85.0442%;--key-angle:15deg"><span class="key-cap"><strong>7</strong><span>pqrs</span></span></button>
+<button data-dir="2" aria-label="Steer down" style="--kx:50.0000%;--ky:86.1062%;--key-angle:0deg"><span class="key-cap"><strong>8</strong><span>tuv</span></span></button>
+<button data-key="9" aria-label="Toggle LCD backlight" style="--kx:75.8333%;--ky:85.0442%;--key-angle:-15deg"><span class="key-cap"><strong>9</strong><span>wxyz</span></span></button>
+<button data-key="*" aria-label="Toggle sound" style="--kx:24.1667%;--ky:92.5664%;--key-angle:15deg"><span class="key-cap"><strong>∗</strong><span>+</span></span></button>
+<button data-key="0" aria-label="Pause or continue" style="--kx:50.0000%;--ky:93.6283%;--key-angle:0deg"><span class="key-cap"><strong>0</strong><span>⌴</span></span></button>
+<button data-key="#" aria-label="Toggle focus mode" style="--kx:75.8333%;--ky:92.5664%;--key-angle:-15deg"><span class="key-cap"><strong>#</strong><span>⇧</span></span></button>
+        </div>
+      </div>
+        <div class="thumbpad" id="thumbpad" aria-label="Touch direction controls">
+          <button data-dir="0" class="pad-up" aria-label="Steer up">▲</button>
+          <button data-dir="3" class="pad-left" aria-label="Steer left">◀</button>
+          <button class="pad-center" data-action="pause" aria-label="Play or pause"><svg><use href="#i-pause"/></svg></button>
+          <button data-dir="1" class="pad-right" aria-label="Steer right">▶</button>
+          <button data-dir="2" class="pad-down" aria-label="Steer down">▼</button>
+        </div>
+      <div class="below-phone"><span id="game-status"><i></i> Ready when you are</span><button id="control-switch" aria-pressed="false">Thumb controls <span>↗</span></button></div>
+      <div class="focus-actions"><button id="focus-menu">Menu</button><button data-boost="true">Hold to boost</button><button id="leave-focus">Exit focus</button></div>
+      <p class="swipe-hint">Swipe the screen or use the keypad.</p>
+    </section>
+
+    <aside class="sidebar" aria-label="Scores and controls">
+      <section class="score-card"><div class="section-label"><svg><use href="#i-cup"/></svg> YOUR PERSONAL BEST</div><div class="best-score" id="best-score">0000</div><div class="score-bottom"><span id="best-caption">Every legend starts at zero.</span><button id="scores-button" aria-label="View top scores">↗</button></div></section>
+      <section class="control-guide"><div class="section-label">A LITTLE MUSCLE MEMORY</div><div class="arrow-keys" aria-hidden="true"><kbd class="up">↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div><p>Arrow keys, WASD, or <b>2 4 6 8</b>.<br>On your phone? Tap or swipe.</p><div class="shortcut-row"><span>Pause / continue</span><kbd>space</kbd></div><div class="shortcut-row"><span>A little extra speed</span><kbd>hold 5</kbd></div><div class="shortcut-row"><span>Pick up and play</span><kbd>enter</kbd></div></section>
+      <section class="run-card"><div class="section-label">ON THE LITTLE SCREEN</div><div><span>Level</span><b id="level-label">04 / 09</b></div><div><span>Maze</span><b id="maze-label">No maze</b></div><div><span>Sound</span><b id="sound-label">On</b></div><button id="tune-button">Make it yours <svg><use href="#i-settings"/></svg></button></section>
+    </aside>
+  </main>
+  <footer class="site-footer"><span>A simpler time. A timeless game.</span><span>Independent recreation <i>·</i> Not affiliated with Nokia</span><button id="about-button">About this remake ↗</button></footer>
+  <div class="sr-only" id="announcer" role="status" aria-live="polite"></div>
+  <div id="toast" role="status" class="toast" hidden></div>
+
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <div class="dialog-header"><div><div class="eyebrow">YOUR GAME, YOUR WAY</div><h2 id="settings-title">A few small settings.</h2></div><button class="icon-button" data-close aria-label="Close settings"><svg><use href="#i-close"/></svg></button></div>
+    <div class="dialog-body">
+      <div class="setting-heading"><label for="level-range">Speed level</label><output id="level-output" for="level-range">4 / 9</output></div><input id="level-range" type="range" min="1" max="9" value="4"><div class="range-captions"><span>Taking it easy</span><span>Thumbs of steel</span></div>
+      <div class="setting-heading"><span id="maze-heading">Choose a maze</span><small>For your next game</small></div><div class="maze-grid" id="maze-grid" role="group" aria-labelledby="maze-heading"></div>
+      <div class="setting-heading"><span id="controls-heading">Touch controls</span></div><div class="segmented" role="group" aria-labelledby="controls-heading"><button data-control="keypad" aria-pressed="true">Classic keypad</button><button data-control="thumb" aria-pressed="false">Thumb pad</button></div>
+      <div class="toggle-row"><div><label for="sound-toggle">Tiny beeps</label><p>Procedural, monophonic game sounds.</p></div><input id="sound-toggle" type="checkbox" role="switch" checked></div>
+      <div class="toggle-row"><div><label for="haptics-toggle">Haptic feedback</label><p>A little nudge, where supported.</p></div><input id="haptics-toggle" type="checkbox" role="switch" checked></div>
+      <div class="setting-heading"><span id="lighting-heading">Physical screen lighting</span></div>
+      <div class="segmented" role="group" aria-labelledby="lighting-heading"><button data-lighting="daylight">Daylight</button><button data-lighting="backlit">Backlit</button><button data-lighting="night">Dark room</button></div>
+      <div class="setting-heading"><label for="angle-range">Viewing angle</label><output id="angle-output" for="angle-range">0°</output></div><input id="angle-range" type="range" min="-45" max="45" value="0"><div class="range-captions"><span>From above</span><span>Front-on</span><span>From below</span></div>
+      <div class="setting-heading"><label for="ambient-range">Ambient light</label><output id="ambient-output" for="ambient-range">100%</output></div><input id="ambient-range" type="range" min="5" max="100" value="100">
+      <div class="toggle-row"><div><label for="reflection-toggle">Cover glass &amp; polarizer</label><p>Subtle reflection and fixed, fine surface texture.</p></div><input id="reflection-toggle" type="checkbox" role="switch" checked></div>
+      <div class="toggle-row"><div><label for="backlight-toggle">LCD backlight</label><p>Green edge lighting behind the reflective LCD.</p></div><input id="backlight-toggle" type="checkbox" role="switch" checked></div>
+      <div class="toggle-row"><div><label for="ghosting-toggle">LCD response</label><p>Asymmetric liquid-crystal rise and decay. No CRT scanlines.</p></div><input id="ghosting-toggle" type="checkbox" role="switch" checked></div>
+      <div class="toggle-row"><div><label for="grid-toggle">Pixel matrix</label><p>Show the space between those 4,032 pixels.</p></div><input id="grid-toggle" type="checkbox" role="switch" checked></div>
+      <div class="setting-heading"><label for="contrast-range">Contrast</label><output id="contrast-output" for="contrast-range">90%</output></div><input id="contrast-range" type="range" min="55" max="100" value="90">
+      <div class="renderer-info" id="renderer-info">Initializing renderer…</div>
+    </div><div class="dialog-footer"><span>Saved on this device.</span><button class="small-primary" data-close>All set</button></div>
+  </dialog>
+  <dialog id="scores-dialog" aria-labelledby="scores-title"><div class="dialog-header"><div><div class="eyebrow">ONE MORE TRY?</div><h2 id="scores-title">The high-score club.</h2></div><button class="icon-button" data-close aria-label="Close scores"><svg><use href="#i-close"/></svg></button></div><div class="dialog-body"><p class="dialog-copy">Your best completed runs, kept on this device. Level and maze are recorded with every score.</p><div id="score-list"></div></div><div class="dialog-footer"><span id="total-runs">0 games played</span><button class="small-primary" data-close>Back to it</button></div></dialog>
+  <dialog id="about-dialog" aria-labelledby="about-title"><div class="dialog-header"><div><div class="eyebrow">HELLO AGAIN, OLD FRIEND</div><h2 id="about-title">Snake, not a screenshot.</h2></div><button class="icon-button" data-close aria-label="Close about"><svg><use href="#i-close"/></svg></button></div><div class="dialog-body about-copy">
+      <h3>The game</h3><p>Eat the little crosses. Grow your snake. Don’t bite yourself. In “No maze,” the screen wraps around. Walls in the five extra mazes are solid. Every fifth food brings a bonus bug: get it before its timer runs out.</p>
+      <h3>The controls</h3><p>Steer with arrow keys, WASD, or 2 / 4 / 6 / 8. Tap the phone keys, use the thumb pad, or swipe anywhere on the LCD. Enter plays, Space or 0 pauses, Escape opens the game menu, and holding 5 gives a 2× speed boost. M toggles sound. F toggles focus mode. Screen taps play or pause.</p>
+      <h3>The little details</h3><p>A real 84 × 48 monochrome framebuffer. A GPU compute shader for liquid-crystal pixel response. Hand-drawn pixel lettering. Independent fixed-step simulation. Automatic pause when you leave, saved games, and offline play after the first visit on a hosted version.</p>
+      <h3>A recreation, not emulation</h3><p>This is a clean-room tribute to Snake II on the Nokia 3310, not original Nokia firmware. The handset is reconstructed as original vector artwork from reference photographs. The title artwork and sound are newly made. Maze layouts, speed timings, bonus rules, and LCD response are reconstructed interpretations, not ROM-verified or physically calibrated replicas. Display color varies with the original unit, light, angle, camera, and your monitor; 100% identity is not certified. Touch controls and focus mode are modern additions. Nokia is a trademark of its owner; this project is not affiliated with or endorsed by Nokia.</p>
+      <p class="fine-print">No analytics, remote accounts, ads, or third-party runtime dependencies. Game data stays in your browser. WebGPU needs a supported browser and a secure context; Canvas 2D is used automatically otherwise.</p>
+    </div><div class="dialog-footer"><button class="text-button" id="fullscreen-button">Enter fullscreen</button><button class="small-primary" data-close>Let’s play</button></div></dialog>
+  <dialog id="restart-dialog" aria-labelledby="restart-title"><div class="dialog-header"><div><div class="eyebrow">FRESH START</div><h2 id="restart-title">Start a new game?</h2></div></div><div class="dialog-body"><p class="dialog-copy">Your current run will be replaced. Your high scores are safe.</p></div><div class="dialog-footer"><button class="text-button" data-close>Keep playing</button><button class="small-primary" id="confirm-restart">New game</button></div></dialog>
+  <noscript><div class="noscript">This game needs JavaScript. Enable JavaScript in your browser to play.</div></noscript>
+  <script>
+(()=>{'use strict';
+
+// ---- engine.js ----
+/** Deterministic, DOM-free game model. One cell is three LCD pixels. */
+const COLS = 28;
+const ROWS = 13;
+const CAPACITY = COLS * ROWS;
+const SPEEDS = Object.freeze([280, 245, 215, 185, 155, 125, 100, 80, 65]);
+const DIRECTIONS = Object.freeze({ UP: 0, RIGHT: 1, DOWN: 2, LEFT: 3 });
+const MAZES = Object.freeze(['No maze', 'Box', 'Rails', 'Courtyard', 'Passages', 'Labyrinth']);
+const DX = [0, 1, 0, -1], DY = [-1, 0, 1, 0];
+const integer = (v, lo, hi) => Number.isInteger(v) && v >= lo && v <= hi;
+
+function createMaze(index) {
+  const cells = new Uint8Array(CAPACITY);
+  const put = (x, y) => { if (x >= 0 && y >= 0 && x < COLS && y < ROWS) cells[y * COLS + x] = 1; };
+  const h = (x1, x2, y) => { for (let x = x1; x <= x2; x++) put(x, y); };
+  const v = (x, y1, y2) => { for (let y = y1; y <= y2; y++) put(x, y); };
+  if (index === 1) { h(0, 27, 0); h(0, 27, 12); v(0, 0, 12); v(27, 0, 12); }
+  if (index === 2) { h(4, 23, 3); h(4, 23, 9); }
+  if (index === 3) {
+    h(4, 10, 2); h(17, 23, 2); h(4, 10, 10); h(17, 23, 10);
+    v(4, 2, 4); v(23, 2, 4); v(4, 8, 10); v(23, 8, 10);
+  }
+  if (index === 4) {
+    v(5, 1, 4); v(5, 8, 11); v(14, 0, 3); v(14, 9, 12);
+    v(22, 1, 4); v(22, 8, 11); h(8, 11, 3); h(17, 19, 9);
+  }
+  if (index === 5) {
+    h(2, 11, 2); v(2, 2, 9); h(2, 8, 9);
+    h(16, 25, 10); v(25, 3, 10); h(19, 25, 3);
+    v(13, 0, 3); v(14, 9, 12); h(9, 18, 6);
+    // Leave a safe starting corridor through the center-left.
+    h(18, 18, 5);
+  }
+  return cells;
+}
+
+/** Typed ring deque and occupancy map: O(1) movement, bounded turn queue. */
+class SnakeGame {
+  constructor({ level = 4, maze = 0, seed = 0x3310 } = {}) {
+    if (!integer(level, 1, 9) || !integer(maze, 0, 5)) throw new RangeError('Invalid level or maze');
+    this.level = level; this.maze = maze; this.rng = (seed >>> 0) || 0x3310;
+    this.walls = createMaze(maze);
+    this.body = new Uint16Array(CAPACITY);
+    this.occupied = new Uint8Array(CAPACITY);
+    this.tail = 0; this.length = 5; this.direction = 1;
+    this.turns = new Uint8Array(2); this.turnCount = 0;
+    this.score = 0; this.eaten = 0; this.ticks = 0; this.growth = 0;
+    this.status = 'ready'; this.food = -1; this.bonus = -1; this.bonusTTL = 0;
+    this.bonusDuration = 30; this.deathCell = -1; this.lastEvent = 'none';
+    this.eventPoints = 0;
+    let start = this.findStart();
+    for (let i = 0; i < this.length; i++) { this.body[i] = start + i; this.occupied[start + i] = 1; }
+    const first = start + this.length + 4;
+    this.food = first < CAPACITY && Math.floor(first / COLS) === Math.floor(start / COLS) && !this.walls[first] ? first : this.findFree();
+  }
+  get head() { return this.body[(this.tail + this.length - 1) % CAPACITY]; }
+  get interval() { return SPEEDS[this.level - 1]; }
+  get freeCount() { let n = 0; for (let i = 0; i < CAPACITY; i++) if (!this.walls[i] && !this.occupied[i]) n++; return n; }
+  segment(i) { return this.body[(this.tail + i) % CAPACITY]; }
+  findStart() {
+    for (const y of [6, 5, 7, 4, 8, 1, 11]) {
+      for (let x = 6; x < 19; x++) {
+        let safe = true;
+        for (let k = 0; k < 10; k++) if (x + k >= COLS || this.walls[y * COLS + x + k]) { safe = false; break; }
+        if (safe) return y * COLS + x;
+      }
+    }
+    throw new Error('Maze has no starting corridor');
+  }
+  random() {
+    let x = this.rng; x ^= x << 13; x ^= x >>> 17; x ^= x << 5;
+    this.rng = x >>> 0; return this.rng / 4294967296;
+  }
+  findFree(exclude = -1) {
+    let count = 0;
+    for (let i = 0; i < CAPACITY; i++) if (!this.walls[i] && !this.occupied[i] && i !== exclude) count++;
+    if (!count) return -1;
+    let target = Math.floor(this.random() * count);
+    for (let i = 0; i < CAPACITY; i++) if (!this.walls[i] && !this.occupied[i] && i !== exclude && target-- === 0) return i;
+    return -1;
+  }
+  start() { if (this.status === 'ready' || this.status === 'paused') this.status = 'running'; }
+  pause() { if (this.status === 'running') this.status = 'paused'; }
+  queueTurn(direction) {
+    if (!integer(direction, 0, 3) || this.turnCount >= 2 || !['running', 'ready', 'paused'].includes(this.status)) return false;
+    const previous = this.turnCount ? this.turns[this.turnCount - 1] : this.direction;
+    if (direction === previous || direction === (previous + 2) % 4) return false;
+    this.turns[this.turnCount++] = direction; return true;
+  }
+  step() {
+    this.lastEvent = 'none'; this.eventPoints = 0;
+    if (this.status !== 'running') return this.lastEvent;
+    if (this.turnCount) { this.direction = this.turns[0]; this.turns[0] = this.turns[1]; this.turnCount--; }
+    const x = this.head % COLS, y = Math.floor(this.head / COLS);
+    const nx = (x + DX[this.direction] + COLS) % COLS;
+    const ny = (y + DY[this.direction] + ROWS) % ROWS;
+    const next = ny * COLS + nx;
+    const food = next === this.food, bonus = next === this.bonus;
+    const addGrowth = food ? 1 : bonus ? 3 : 0;
+    const grows = this.growth + addGrowth > 0;
+    // Moving into the tail is legal ONLY when the tail vacates on this tick.
+    if (this.walls[next] || (this.occupied[next] && (next !== this.body[this.tail] || grows))) {
+      this.status = 'over'; this.deathCell = next; this.lastEvent = 'death'; return this.lastEvent;
+    }
+    this.growth += addGrowth;
+    if (!this.growth) { this.occupied[this.body[this.tail]] = 0; this.tail = (this.tail + 1) % CAPACITY; this.length--; }
+    else this.growth--;
+    this.body[(this.tail + this.length) % CAPACITY] = next; this.length++; this.occupied[next] = 1;
+    this.ticks++;
+    if (food) {
+      this.eaten++; this.eventPoints = this.level; this.score += this.eventPoints; this.lastEvent = 'food';
+      this.food = this.findFree(this.bonus);
+      if (this.eaten % 5 === 0 && this.bonus === -1 && this.freeCount > 1) {
+        this.bonus = this.findFree(this.food); this.bonusTTL = this.bonusDuration;
+      }
+    }
+    if (bonus) {
+      this.eventPoints = this.level * this.bonusTTL; this.score += this.eventPoints;
+      this.bonus = -1; this.bonusTTL = 0; this.lastEvent = 'bonus';
+    } else if (this.bonus >= 0 && --this.bonusTTL <= 0) { this.bonus = -1; this.bonusTTL = 0; }
+    if (this.freeCount === 0) { this.status = 'won'; this.food = -1; this.bonus = -1; this.lastEvent = 'win'; }
+    // A bonus can occupy the last free cell. Restore normal food after expiry.
+    else if (this.food < 0 && this.bonus < 0) this.food = this.findFree();
+    return this.lastEvent;
+  }
+  snapshot() {
+    return { version: 1, level: this.level, maze: this.maze, rng: this.rng,
+      body: Array.from({ length: this.length }, (_, i) => this.segment(i)), direction: this.direction,
+      score: this.score, eaten: this.eaten, ticks: this.ticks, growth: this.growth,
+      food: this.food, bonus: this.bonus, bonusTTL: this.bonusTTL };
+  }
+  static restore(data) {
+    if (!data || data.version !== 1 || !Array.isArray(data.body) || data.body.length < 2 || data.body.length > CAPACITY) throw new Error('Invalid saved game');
+    const g = new SnakeGame(data);
+    for (const key of ['score', 'eaten', 'ticks', 'growth']) if (!integer(data[key], 0, key === 'growth' ? CAPACITY : 1e9)) throw new Error(`Invalid ${key}`);
+    if (!integer(data.direction, 0, 3) || !integer(data.rng, 1, 0xffffffff) || !integer(data.food, -1, CAPACITY - 1) || !integer(data.bonus, -1, CAPACITY - 1) || !integer(data.bonusTTL, 0, 30)) throw new Error('Invalid saved positions');
+    g.occupied.fill(0); g.body.fill(0); g.tail = 0; g.length = data.body.length;
+    for (let i = 0; i < g.length; i++) {
+      const p = data.body[i];
+      if (!integer(p, 0, CAPACITY - 1) || g.walls[p] || g.occupied[p]) throw new Error('Invalid saved body');
+      if (i) {
+        const prev = data.body[i - 1], dx = Math.abs(p % COLS - prev % COLS), dy = Math.abs(Math.floor(p / COLS) - Math.floor(prev / COLS));
+        if (!((dy === 0 && (dx === 1 || dx === COLS - 1)) || (dx === 0 && (dy === 1 || dy === ROWS - 1)))) throw new Error('Disconnected saved body');
+      }
+      g.body[i] = p; g.occupied[p] = 1;
+    }
+    for (const p of [data.food, data.bonus]) if (p >= 0 && (g.occupied[p] || g.walls[p])) throw new Error('Occupied saved food');
+    if (data.food >= 0 && data.food === data.bonus) throw new Error('Overlapping saved food');
+    if ((data.bonus === -1) !== (data.bonusTTL === 0)) throw new Error('Invalid saved bonus timer');
+    const neck = g.segment(g.length - 2), head = g.head;
+    const expected = ((neck % COLS + DX[data.direction] + COLS) % COLS) + ((Math.floor(neck / COLS) + DY[data.direction] + ROWS) % ROWS) * COLS;
+    if (expected !== head) throw new Error('Invalid saved heading');
+    for (const key of ['score', 'eaten', 'ticks', 'growth', 'food', 'bonus', 'bonusTTL', 'direction', 'rng']) g[key] = data[key];
+    g.status = 'paused'; return g;
+  }
+}
+
+
+// ---- artwork.js ----
+/** Hand-authored title illustration; 84×48 one-bit pixels. No firmware assets. */
+const TITLE_ART = [
+  "000000000000000000000000000000000000000000000000000000000000000000000000000000111000",
+  "000000000000000000000000000000000000000000000000000000000000000000000000111111001000",
+  "000000000111111110000000000000011111100000000000000111111111100000111111000000001000",
+  "000000000111111110111100001100011111100011110011110111111111100111000000000000001000",
+  "000000111100000000111100001111110011110011110011111111000000000100000000000000011000",
+  "000000111100000001111110011011110011110111100111101111000000000100000001000001100000",
+  "000000111100000001111110011011110011110111100111101111000000000101100001000001000000",
+  "000000111100000001111110011011110011110111111110001111000000000110100001000001000000",
+  "000000011111100001111110011111111111100111111110011111111000000000100001000001000000",
+  "000000011111100011110011110111111111101111110000011111111000000000100001000001000000",
+  "000000000001111011110011110111100111101111110000011110000000000000100001000010000000",
+  "000000000001111011110011110111100111101111111100011110000000000000100010000010000000",
+  "000000000011110011110011111111001111001111111100111100000000000001000010000010000000",
+  "000000000011110111100001101111001111011110011110111100000000000001000010000010000000",
+  "000011111111000111100001101111001111011110011110111111111100000001000010000010110000",
+  "000011111111000111100001101111001111011110011110111111111100000001000010000011010000",
+  "000000000000000111100001100000000000011110011110000000000000000011000010000000010000",
+  "000000000000000000000000000000000000000000000000000000000000001100000000000000010000",
+  "000000000000000000000000000000000000000000100000000000000000001000000000000001110000",
+  "000000000000000000000000001111111111111111111000000000000000001000000001111110000000",
+  "000000000000000000000000011111110111101000111111000000000000001001111110000000000000",
+  "000000000000000000000001111000001100011011000110000000000000001110000000000000000000",
+  "000000000000000000000001110000111111111111111100000010000000000000000000000000000000",
+  "000000000000000000000001110101011111111111100000000100000000000000000000000000000000",
+  "000000000000000000000011101010111111111011111111111100000000000000000000000000000000",
+  "000000000000000000000011100101011111111101110000000011000000000000000000000000000000",
+  "000000000000000000000001111010101111111111111000000000000000000000000000000000000000",
+  "000000000000000000000001110101010110111111111000000000000000000000000000000000000000",
+  "000000000000000000000000111010101110111111111100000000000000000000000000000000000000",
+  "000000000000000000000000111101010111010111100000000000000000000000000000000000000000",
+  "000000000000000000000000011111000011011111100000000000000000000000000000000000000000",
+  "000000000000000000000000011111111011001111100000000000000000000000000000000000000000",
+  "000000000000000000000000000011111111110011111000000000000001000000000000000000000000",
+  "000000000000000000000000000000111111111110111000000000001111111111110000000000000000",
+  "000000000000000000000000000100000100011111001100000111110000000000111000000000000000",
+  "000000000000000000000001111100000000000011110110001110111111111000011100000000000000",
+  "000000000000000000000101100000000000000000111011111111111111111100001110000000000000",
+  "000000000000000000001110011100000000000000011101111110000000001111000111000000000000",
+  "000000000000000000001101111100000000000000001111111000011111110011100011000000000000",
+  "000000000100000000011101100000000000000000001111100001111111110011000011000000000000",
+  "000001111111100000000011100000000000000010011111000011100000000111000110000000000000",
+  "000001100111100000001111101000000000101111110111000001111111111110000110000000000000",
+  "000011110111100000001110111111111111111111001111110000011000000000011110000000000000",
+  "000000011111111111111011000101111110010001111000111000000000000000111000000000000000",
+  "000000000111111111100001111110001001111111110000011111111111111111110000000000000000",
+  "000000000000000000000000111111111111110000000000000111111111111111000000000000000000",
+  "000000000000000000000000000000001000000000000000000000000000000000000000000000000000",
+  "000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+];
+
+
+// ---- font.js ----
+/** Independently drawn proportional 5×7 handset UI glyphs. */
+const UI_FONT = {"A":["01110","10001","10001","11111","10001","10001","10001"],"B":["11110","10001","10001","11110","10001","10001","11110"],"C":["01110","10001","10000","10000","10000","10001","01110"],"D":["11110","10001","10001","10001","10001","10001","11110"],"E":["11111","10000","10000","11110","10000","10000","11111"],"F":["11111","10000","10000","11110","10000","10000","10000"],"G":["01110","10001","10000","10111","10001","10001","01111"],"H":["10001","10001","10001","11111","10001","10001","10001"],"I":["111","010","010","010","010","010","111"],"J":["00111","00010","00010","00010","10010","10010","01100"],"K":["10001","10010","10100","11000","10100","10010","10001"],"L":["1000","1000","1000","1000","1000","1000","1111"],"M":["10001","11011","10101","10101","10001","10001","10001"],"N":["10001","11001","10101","10011","10001","10001","10001"],"O":["01110","10001","10001","10001","10001","10001","01110"],"P":["11110","10001","10001","11110","10000","10000","10000"],"Q":["01110","10001","10001","10001","10101","10010","01101"],"R":["11110","10001","10001","11110","10100","10010","10001"],"S":["01111","10000","10000","01110","00001","00001","11110"],"T":["11111","00100","00100","00100","00100","00100","00100"],"U":["10001","10001","10001","10001","10001","10001","01110"],"V":["10001","10001","10001","10001","10001","01010","00100"],"W":["10001","10001","10001","10101","10101","10101","01010"],"X":["10001","10001","01010","00100","01010","10001","10001"],"Y":["10001","10001","01010","00100","00100","00100","00100"],"Z":["11111","00001","00010","00100","01000","10000","11111"],"0":["01110","10001","10011","10101","11001","10001","01110"],"1":["010","110","010","010","010","010","111"],"2":["01110","10001","00001","00010","00100","01000","11111"],"3":["11110","00001","00001","01110","00001","00001","11110"],"4":["00010","00110","01010","10010","11111","00010","00010"],"5":["11111","10000","10000","11110","00001","00001","11110"],"6":["01110","10000","10000","11110","10001","10001","01110"],"7":["11111","00001","00010","00100","01000","01000","01000"],"8":["01110","10001","10001","01110","10001","10001","01110"],"9":["01110","10001","10001","01111","00001","00001","01110"],"a":["00000","00000","01110","00001","01111","10001","01111"],"b":["10000","10000","10110","11001","10001","10001","11110"],"c":["0000","0000","0111","1000","1000","1000","0111"],"d":["00001","00001","01101","10011","10001","10001","01111"],"e":["00000","00000","01110","10001","11111","10000","01111"],"f":["0011","0100","1110","0100","0100","0100","0100"],"g":["00000","01111","10001","10001","01111","00001","11110"],"h":["10000","10000","10110","11001","10001","10001","10001"],"i":["1","0","1","1","1","1","1"],"j":["01","00","01","01","01","01","10"],"k":["1000","1000","1001","1010","1100","1010","1001"],"l":["10","10","10","10","10","10","01"],"m":["00000","00000","11010","10101","10101","10101","10101"],"n":["00000","00000","10110","11001","10001","10001","10001"],"o":["00000","00000","01110","10001","10001","10001","01110"],"p":["00000","11110","10001","10001","11110","10000","10000"],"q":["00000","01111","10001","10001","01111","00001","00001"],"r":["0000","0000","1011","1100","1000","1000","1000"],"s":["0000","0000","0111","1000","0110","0001","1110"],"t":["0100","0100","1110","0100","0100","0100","0011"],"u":["00000","00000","10001","10001","10001","10011","01101"],"v":["00000","00000","10001","10001","10001","01010","00100"],"w":["00000","00000","10001","10101","10101","10101","01010"],"x":["00000","00000","10001","01010","00100","01010","10001"],"y":["00000","10001","10001","10001","01111","00001","11110"],"z":["0000","0000","1111","0001","0010","0100","1111"]," ":["000","000","000","000","000","000","000"],":":["0","1","0","0","1","0","0"],"*":["000","101","010","111","010","101","000"],"-":["000","000","000","111","000","000","000"],"?":["1110","0001","0010","0100","0100","0000","0100"]};
+
+
+// ---- lcd.js ----
+
+
+const LCD_WIDTH = 84, LCD_HEIGHT = 48;
+// Hand-drawn 3×5 glyphs. No bitmap fonts or firmware assets are imported.
+const glyphs = {
+ ' ':['000','000','000','000','000'], A:['010','101','111','101','101'], B:['110','101','110','101','110'],
+ C:['011','100','100','100','011'], D:['110','101','101','101','110'], E:['111','100','110','100','111'],
+ F:['111','100','110','100','100'], G:['011','100','101','101','011'], H:['101','101','111','101','101'],
+ I:['111','010','010','010','111'], J:['001','001','001','101','010'], K:['101','101','110','101','101'],
+ L:['100','100','100','100','111'], M:['101','111','111','101','101'], N:['101','111','111','111','101'],
+ O:['010','101','101','101','010'], P:['110','101','110','100','100'], Q:['010','101','101','011','001'],
+ R:['110','101','110','101','101'], S:['011','100','010','001','110'], T:['111','010','010','010','010'],
+ U:['101','101','101','101','111'], V:['101','101','101','101','010'], W:['101','101','111','111','101'],
+ X:['101','101','010','101','101'], Y:['101','101','010','010','010'], Z:['111','001','010','100','111'],
+ '0':['111','101','101','101','111'], '1':['010','110','010','010','111'], '2':['110','001','111','100','111'],
+ '3':['110','001','010','001','110'], '4':['101','101','111','001','001'], '5':['111','100','110','001','110'],
+ '6':['011','100','111','101','111'], '7':['111','001','010','010','010'], '8':['111','101','111','101','111'],
+ '9':['111','101','111','001','110'], ':':['000','010','000','010','000'], '.':['000','000','000','000','010'],
+ '-':['000','000','111','000','000'], '+':['000','010','111','010','000'], '/':['001','001','010','100','100'],
+ '>':['100','010','001','010','100'], '<':['001','010','100','010','001'], '?':['110','001','010','000','010'],
+ '!':['010','010','010','000','010'], '#':['101','111','101','111','101'], '=':['000','111','000','111','000'],
+ '*':['101','010','111','010','101'], '%':['101','001','010','100','101'], '(':['001','010','010','010','001'],
+ ')':['100','010','010','010','100'], '_':['000','000','000','000','111']
+};
+class LCD {
+  constructor() { this.pixels = new Uint32Array(LCD_WIDTH * LCD_HEIGHT); }
+  clear() { this.pixels.fill(0); }
+  pixel(x, y, on = 1) { if (x >= 0 && x < 84 && y >= 0 && y < 48) this.pixels[(y | 0) * 84 + (x | 0)] = on; }
+  rect(x, y, w, h, on = 1) { for (let yy = y; yy < y + h; yy++) for (let xx = x; xx < x + w; xx++) this.pixel(xx, yy, on); }
+  box(x, y, w, h, on = 1) { this.rect(x, y, w, 1, on); this.rect(x, y + h - 1, w, 1, on); this.rect(x, y, 1, h, on); this.rect(x + w - 1, y, 1, h, on); }
+  textWidth(text, scale = 1) { return Math.max(0, text.length * 4 - 1) * scale; }
+  text(text, x, y, scale = 1, on = 1) {
+    for (const ch of String(text).toUpperCase()) {
+      const glyph = glyphs[ch] || glyphs['?'];
+      for (let yy = 0; yy < 5; yy++) for (let xx = 0; xx < 3; xx++) if (glyph[yy][xx] === '1') this.rect(x + xx * scale, y + yy * scale, scale, scale, on);
+      x += 4 * scale;
+    }
+  }
+  center(text, y, scale = 1, on = 1) { this.text(text, Math.floor((84 - this.textWidth(text, scale)) / 2), y, scale, on); }
+  heading(text) { this.center(text, 1); this.rect(0, 7, 84, 1); }
+  uiTextWidth(value) { return Math.max(0,[...String(value)].reduce((w,ch)=>w+(UI_FONT[ch]||UI_FONT['?'])[0].length+1,0)-1); }
+  uiText(value,x,y,on=1) {
+    for(const ch of String(value)) {
+      const g=UI_FONT[ch]||UI_FONT['?'];
+      for(let yy=0;yy<7;yy++)for(let xx=0;xx<g[yy].length;xx++)if(g[yy][xx]==='1')this.pixel(x+xx,y+yy,on);
+      x+=g[0].length+1;
+    }
+  }
+  uiCenter(value,y,on=1) { this.uiText(value,Math.floor((84-this.uiTextWidth(value))/2),y,on); }
+  snakeCell(cell, head = false, dir = 1) {
+    const x = (cell % 28) * 3, y = 8 + Math.floor(cell / 28) * 3;
+    this.rect(x, y, 3, 3); this.pixel(x + 1, y + 1, 0);
+    if (head) {
+      this.pixel(x + 1, y + 1, 1);
+      const eyes = [ [[0,0],[2,0]], [[2,0],[2,2]], [[0,2],[2,2]], [[0,0],[0,2]] ][dir];
+      for (const e of eyes) this.pixel(x + e[0], y + e[1], 0);
+    }
+  }
+  drawGame(game) {
+    this.clear(); const score=String(game.score).padStart(4,'0');
+    this.uiText(score,83-this.uiTextWidth(score),0); this.rect(0,7,84,1);
+    this.rect(2,1,3,5);this.rect(1,2,5,3);this.pixel(4,0);this.pixel(3,2,0);
+    if (game.bonus >= 0) { this.box(28, 1, 30, 5); this.rect(30, 3, Math.ceil(game.bonusTTL / game.bonusDuration * 26), 1); }
+    for (let i = 0; i < game.walls.length; i++) if (game.walls[i]) this.rect((i % 28) * 3, 8 + Math.floor(i / 28) * 3, 3, 3);
+    for (let i = 0; i < game.length; i++) this.snakeCell(game.segment(i), i === game.length - 1, game.direction);
+    if (game.food >= 0) {
+      const x = game.food % 28 * 3, y = 8 + Math.floor(game.food / 28) * 3;
+      this.rect(x, y + 1, 3, 1); this.rect(x + 1, y, 1, 3);
+    }
+    if (game.bonus >= 0) {
+      const x = game.bonus % 28 * 3, y = 8 + Math.floor(game.bonus / 28) * 3;
+      this.rect(x, y, 3, 3); this.pixel(x + 1, y + 1, 0);
+      // A single-cell bug, with six tiny legs where there is free LCD space.
+      this.pixel(x - 1, y); this.pixel(x + 3, y); this.pixel(x - 1, y + 2); this.pixel(x + 3, y + 2);
+    }
+  }
+  panel(title, line1, line2) {
+    this.rect(4, 14, 76, 29, 0); this.box(4, 14, 76, 29); this.box(6, 16, 72, 25);
+    this.center(title, 19); if (line1) this.center(line1, 27); if (line2) this.center(line2, 35);
+  }
+  title(best = 0, canContinue = false) {
+    this.clear();
+    for(let y=0;y<48;y++)for(let x=0;x<84;x++)if(TITLE_ART[y][x]==='1')this.pixel(x,y);
+    // The title card uses all 4,032 LCD dots. Scores and action labels remain outside the lens.
+  }
+  menu(title, items, selected) {
+    this.clear();this.uiCenter(title==='SNAKE II'?'Snake II':title,0);this.rect(0,9,84,1);
+    const first=Math.max(0,Math.min(selected-1,items.length-3));
+    items.slice(first,first+3).forEach((item,i)=>{
+      const active=i+first===selected,y=12+i*10;
+      if(active)this.rect(0,y-1,80,9);
+      let label=String(item);while(this.uiTextWidth(label)>74)label=label.slice(0,-1);
+      this.uiText(label,3,y,active?0:1);
+    });
+    this.uiCenter('Select',41);
+    if(items.length>3){this.rect(83,11,1,27);this.rect(82,11+Math.round(selected/(items.length-1)*22),2,5);}
+  }
+}
+
+
+// ---- optics.js ----
+/** Reflective monochrome LCD appearance model, not measured Nokia panel calibration.
+ * RGB values are display-referred sRGB. Both GPU and CPU use the same operations.
+ * Display data remains one bit; only the physical liquid-crystal response is analog.
+ */
+const OPTICAL_DEFAULTS = Object.freeze({ambient:1, angle:0, reflection:true, rise:.032, fall:.085});
+const clamp01 = value => Math.max(0, Math.min(1, value));
+function opticalParameters(settings = {}) {
+  const finite = (value, fallback) => Number.isFinite(value) ? value : fallback;
+  return {
+    contrast: Math.max(.55, Math.min(1, finite(settings.contrast,.94))),
+    light: settings.backlight ? 1 : 0, ghosting: settings.ghosting !== false,
+    grid: settings.grid !== false, ambient: Math.max(.05, Math.min(1,finite(settings.ambient,1))),
+    angle: Math.max(-45,Math.min(45,finite(settings.angle,0))) / 45,
+    reflection: settings.reflection !== false ? 1 : 0, rise:.032, fall:.085
+  };
+}
+function advanceCharge(current, target, seconds, ghosting = true) {
+  if (!ghosting) return target;
+  const tau = target > current ? .032 : .085;
+  const value = current + (target-current) * (1-Math.exp(-Math.max(0, Math.min(seconds,.1))/tau));
+  return value < .0001 ? 0 : value > .9999 ? 1 : value;
+}
+function surfaceNoise(x, y) {
+  let h = (Math.imul(x,374761393) + Math.imul(y,668265263)) >>> 0;
+  h = Math.imul(h ^ (h >>> 13),1274126177) >>> 0;
+  return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
+}
+function aperture(x, y, grid, footprint) {
+  if (!grid) return 1;
+  const dx = Math.min(x,1-x)-.046, dy = Math.min(y,1-y)-.052;
+  return clamp01(dx / footprint + .5) * clamp01(dy / footprint + .5);
+}
+/** [background R,G,B, ink R,G,B, density] per point. No mutable global state. */
+function opticalSurface(u,v,p) {
+  const light=p.light, ambient=Math.sqrt(p.ambient), angle=p.angle;
+  const edge=Math.exp(-u*9)+Math.exp(-(1-u)*9);
+  const illum=(.40+.60*ambient)*(1-.075*Math.hypot((u-.5)*1.4,(v-.48)*1.1));
+  const led=light*(.15+.085*edge);
+  const noise=(surfaceNoise(Math.floor(u*672),Math.floor(v*384))-.5)*.012*p.reflection;
+  const reflection=Math.exp(-Math.pow((v+.36*u-(.10+.08*angle))/.2,2))*.045*p.reflection;
+  const polar=1-.08*Math.max(0,-angle);
+  const base=[.622,.669,.466], glow=[.53,.73,.235], ink=[.118,.153,.092];
+  const bg=base.map((c,i)=>clamp01((c*illum*(1-light*.23)+glow[i]*led)*polar+reflection+noise));
+  const dark=ink.map((c,i)=>clamp01(c*(.65+.35*ambient)+light*[.017,.027,.002][i]+reflection*.3));
+  const density=clamp01(p.contrast*(1-.27*Math.abs(angle)+.055*angle));
+  return [...bg,...dark,density];
+}
+function shadeOpticalPixel(surface, charge, coverage=1, shadow=0) {
+  const alpha=clamp01(charge*coverage*surface[6]);
+  return surface.slice(0,3).map((bg,i)=>clamp01((bg*(1-shadow*.105))*(1-alpha)+surface[i+3]*alpha));
+}
+
+
+// ---- renderer.js ----
+const W=LCD_WIDTH,H=LCD_HEIGHT;
+
+
+const N = W * H;
+// One-bit RAM -> exponential charge response -> anisotropic reflective LCD projection.
+const PARAMS = /* wgsl */`
+struct Params {
+ resolution: vec2f, delta: f32, contrast: f32,
+ light: f32, ghosting: f32, grid: f32, ambient: f32,
+ angle: f32, reflection: f32, rise: f32, fall: f32,
+ padding: vec4f
+}
+`;
+const WGSL = PARAMS + /* wgsl */`
+@group(0) @binding(0) var<storage, read> pixelTargets: array<u32>;
+@group(0) @binding(1) var<storage, read_write> charge: array<f32>;
+@group(0) @binding(2) var<uniform> p: Params;
+@compute @workgroup_size(64) fn update(@builtin(global_invocation_id) id: vec3u) {
+ let i=id.x; if(i>=4032u){return;}
+ let to=f32(pixelTargets[i]); let tau=select(p.fall,p.rise,to>charge[i]);
+ let amount=select(1.0,1.0-exp(-clamp(p.delta,0.0,.1)/tau),p.ghosting>.5);
+ var q=mix(charge[i],to,amount);
+ if(q<.0001){q=0.0;} if(q>.9999){q=1.0;} charge[i]=q;
+}
+`;
+const DRAW_WGSL = PARAMS + /* wgsl */`
+@group(0) @binding(0) var<storage, read> charge: array<f32>;
+@group(0) @binding(1) var<uniform> p: Params;
+@vertex fn vs(@builtin(vertex_index) id:u32)->@builtin(position) vec4f {
+ var positions=array<vec2f,3>(vec2f(-1,-1),vec2f(3,-1),vec2f(-1,3));
+ return vec4f(positions[id],0,1);
+}
+fn noise(c:vec2u)->f32 {
+ var h=c.x*374761393u+c.y*668265263u;
+ h=(h^(h>>13u))*1274126177u;
+ return f32(h^(h>>16u))/4294967295.0;
+}
+fn maskAt(q:vec2f,footprint:f32)->f32 {
+ let f=fract(q); let d=min(f,1.0-f)-vec2f(.046,.052);
+ let aa=clamp(d/footprint+.5,vec2f(0),vec2f(1));
+ return select(1.0,aa.x*aa.y,p.grid>.5);
+}
+fn shadowAt(q:vec2f,footprint:f32)->f32 {
+ if(any(q<vec2f(0))||any(q>=vec2f(84,48))){return 0.0;}
+ let c=vec2u(q); return charge[c.y*84u+c.x]*maskAt(q,footprint);
+}
+@fragment fn fs(@builtin(position) pos:vec4f)->@location(0) vec4f {
+ let uv=pos.xy/p.resolution;
+ let q=clamp(uv*vec2f(84,48),vec2f(0),vec2f(83.999,47.999));
+ let c=vec2u(q); let footprint=max(84.0/p.resolution.x,48.0/p.resolution.y);
+ let coverage=maskAt(q,footprint);
+ let ambient=sqrt(p.ambient); let edge=exp(-uv.x*9.0)+exp(-(1.0-uv.x)*9.0);
+ let illum=(.40+.60*ambient)*(1.0-.075*length((uv-vec2f(.5,.48))*vec2f(1.4,1.1)));
+ let led=p.light*(.15+.085*edge);
+ let grain=(noise(vec2u(uv*vec2f(672,384)))-.5)*.012*p.reflection;
+ let t=(uv.y+.36*uv.x-(.10+.08*p.angle))/.2;
+ let reflection=exp(-t*t)*.045*p.reflection;
+ let polar=1.0-.08*max(0.0,-p.angle);
+ let bg=clamp((vec3f(.622,.669,.466)*illum*(1.0-p.light*.23)+vec3f(.53,.73,.235)*led)*polar+vec3f(reflection+grain),vec3f(0),vec3f(1));
+ let ink=vec3f(.118,.153,.092)*(.65+.35*ambient)+p.light*vec3f(.017,.027,.002)+vec3f(reflection*.3);
+ let density=clamp(p.contrast*(1.0-.27*abs(p.angle)+.055*p.angle),0.0,1.0);
+ let shadow=shadowAt(q-vec2f(.14,.19),footprint)*.105;
+ let alpha=clamp(charge[c.y*84u+c.x]*density*coverage,0.0,1.0);
+ return vec4f(mix(bg*(1.0-shadow),ink,alpha),1.0);
+}
+`;
+
+class GPULCD {
+  static async create(canvas, onLost, readback = false) {
+    if (!navigator.gpu || !isSecureContext) throw new Error('WebGPU requires a supported browser and HTTPS or localhost.');
+    const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'low-power' });
+    if (!adapter) throw new Error('No WebGPU adapter available.');
+    const device = await adapter.requestDevice();
+    try {
+      const target = device.createBuffer({ label: 'LCD target pixels', size: N * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+      const charge = device.createBuffer({ label: 'LCD persistent pixel charge', size: N * 4, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+      const uniform = device.createBuffer({ label: 'LCD parameters', size: 64, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+      const format = readback ? 'rgba8unorm' : navigator.gpu.getPreferredCanvasFormat();
+      const computeModule = device.createShaderModule({ label: 'LCD response compute shader', code: WGSL });
+      const drawModule = device.createShaderModule({ label: 'LCD display shader', code: DRAW_WGSL });
+      for (const module of [computeModule, drawModule]) {
+        if (module.getCompilationInfo) {
+          const info = await module.getCompilationInfo();
+          const errors = info.messages.filter(m => m.type === 'error');
+          if (errors.length) throw new Error(errors.map(e => e.message).join('\n'));
+        }
+      }
+      const compute = await device.createComputePipelineAsync({ label: 'LCD response', layout: 'auto', compute: { module: computeModule, entryPoint: 'update' } });
+      const pipeline = await device.createRenderPipelineAsync({ label: 'Monochrome LCD', layout: 'auto', vertex: { module: drawModule, entryPoint: 'vs' }, fragment: { module: drawModule, entryPoint: 'fs', targets: [{ format }] }, primitive: { topology: 'triangle-list' } });
+      const computeBind = device.createBindGroup({ layout: compute.getBindGroupLayout(0), entries: [ { binding: 0, resource: { buffer: target } }, { binding: 1, resource: { buffer: charge } }, { binding: 2, resource: { buffer: uniform } } ] });
+      const drawBind = device.createBindGroup({ layout: pipeline.getBindGroupLayout(0), entries: [ { binding: 0, resource: { buffer: charge } }, { binding: 1, resource: { buffer: uniform } } ] });
+      const context = readback ? null : canvas.getContext('webgpu');
+      if (!readback && !context) throw new Error('WebGPU canvas context unavailable.');
+      context?.configure({ device, format, alphaMode: 'opaque' });
+      const result = new GPULCD();
+      Object.assign(result, { canvas, device, context, readback, texture: null, target, charge, uniform, compute, pipeline, computeBind, drawBind, params: new Float32Array(16), name: 'WebGPU', frames: 0, disposed: false });
+      device.lost.then(info => { if (!result.disposed) onLost(info.message || 'GPU device lost'); });
+      device.addEventListener('uncapturederror', e => { console.error('WebGPU:', e.error.message); if (!result.disposed) onLost(e.error.message); });
+      return result;
+    } catch (error) { device.destroy(); throw error; }
+  }
+  upload(pixels) { this.device.queue.writeBuffer(this.target, 0, pixels); }
+  draw(dt, settings) {
+    const p=opticalParameters(settings);
+    this.params.set([this.canvas.width,this.canvas.height,dt,p.contrast,p.light,p.ghosting?1:0,p.grid?1:0,p.ambient,p.angle,p.reflection,p.rise,p.fall,0,0,0,0]);
+    this.device.queue.writeBuffer(this.uniform, 0, this.params);
+    const encoder = this.device.createCommandEncoder({ label: 'LCD frame' });
+    const compute = encoder.beginComputePass(); compute.setPipeline(this.compute); compute.setBindGroup(0, this.computeBind); compute.dispatchWorkgroups(Math.ceil(N / 64)); compute.end();
+    const pass = encoder.beginRenderPass({ colorAttachments: [{ view: this.renderTexture().createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: 0.64, g: 0.72, b: 0.45, a: 1 } }] });
+    pass.setPipeline(this.pipeline); pass.setBindGroup(0, this.drawBind); pass.draw(3); pass.end();
+    this.device.queue.submit([encoder.finish()]); this.frames++;
+  }
+  renderTexture() {
+    if (!this.readback) return this.context.getCurrentTexture();
+    const { width, height } = this.canvas;
+    if (!this.texture || this.texture.width !== width || this.texture.height !== height) {
+      this.texture?.destroy();
+      this.texture = this.device.createTexture({ label: 'LCD export surface', size: [width,height], format: 'rgba8unorm', usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+    }
+    return this.texture;
+  }
+  /** Deterministic, opt-in GPU texture export. The interactive path never maps
+   * GPU memory or pays this synchronization cost. Useful for optical regression
+   * tests and screenshots on hosts with no WebGPU swap-chain presentation. */
+  async readPixels() {
+    if (!this.readback || !this.texture) throw new Error('Draw a readback-enabled LCD before exporting pixels.');
+    const { width, height } = this.texture;
+    const rowBytes = width * 4, stride = Math.ceil(rowBytes / 256) * 256;
+    const buffer = this.device.createBuffer({ label: 'LCD export readback', size: stride * height, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    try {
+      const encoder = this.device.createCommandEncoder();
+      encoder.copyTextureToBuffer({ texture: this.texture }, { buffer, bytesPerRow: stride }, [width,height]);
+      this.device.queue.submit([encoder.finish()]);
+      await buffer.mapAsync(GPUMapMode.READ);
+      const mapped = new Uint8Array(buffer.getMappedRange()), rgba = new Uint8Array(rowBytes * height);
+      for (let y=0;y<height;y++) rgba.set(mapped.subarray(y*stride,y*stride+rowBytes),y*rowBytes);
+      return { width, height, rgba };
+    } finally { buffer.destroy(); }
+  }
+  destroy() { this.disposed = true; this.texture?.destroy(); this.context?.unconfigure?.(); this.target.destroy(); this.charge.destroy(); this.uniform.destroy(); this.device.destroy(); }
+}
+/** Cached CPU projection. Static glass/illumination is baked only on resize or
+ * optical-setting change; frames contain one charge loop and a linear RGBA loop.
+ * No per-pixel DOM calls, allocations, noise functions, or gradients per frame. */
+class CanvasLCD {
+  constructor(canvas) {
+    this.canvas=canvas; this.ctx=canvas.getContext('2d',{alpha:false});
+    if(!this.ctx)throw new Error('Canvas is not available.');
+    this.name='Canvas 2D';this.frames=0;this.pixels=new Uint32Array(N);this.charge=new Float32Array(N);
+    this.scratch=typeof OffscreenCanvas==='function'?new OffscreenCanvas(84,48):document.createElement('canvas');
+    this.scratchContext=this.scratch.getContext('2d',{alpha:false});this.cacheKey='';
+  }
+  upload(pixels){this.pixels.set(pixels);}
+  bake(p){
+    const width=Math.min(672,Math.max(W,this.canvas.width));
+    const height=Math.max(H,Math.round(width*this.canvas.height/this.canvas.width));
+    const footprint=Math.max(W/width,H/height),count=width*height;
+    const key=JSON.stringify([width,height,p]);if(key===this.cacheKey)return;this.cacheKey=key;
+    this.scratch.width=width;this.scratch.height=height;
+    this.image=this.scratchContext.createImageData(width,height);
+    this.surface=new Float32Array(count*6);this.coverage=new Float32Array(count);
+    this.index=new Uint16Array(count);this.shadowIndex=new Int16Array(count);this.shadowCoverage=new Float32Array(count);
+    this.density=opticalSurface(.5,.5,p)[6];
+    for(let y=0,i=0;y<height;y++)for(let x=0;x<width;x++,i++){
+      const qx=(x+.5)/width*W,qy=(y+.5)/height*H;
+      const surf=opticalSurface((x+.5)/width,(y+.5)/height,p);
+      this.surface.set(surf.slice(0,6),i*6);this.index[i]=Math.floor(qy)*W+Math.floor(qx);
+      this.coverage[i]=aperture(qx%1,qy%1,p.grid,footprint);
+      const sx=qx-.14,sy=qy-.19;
+      this.shadowIndex[i]=sx<0||sy<0?-1:Math.floor(sy)*W+Math.floor(sx);
+      this.shadowCoverage[i]=aperture(((sx%1)+1)%1,((sy%1)+1)%1,p.grid,footprint);
+      this.image.data[i*4+3]=255;
+    }
+  }
+  draw(dt,settings){
+    const p=opticalParameters(settings);this.bake(p);
+    const on=1-Math.exp(-Math.min(dt,.1)/p.rise),off=1-Math.exp(-Math.min(dt,.1)/p.fall);
+    for(let i=0;i<N;i++){
+      const to=this.pixels[i],old=this.charge[i];
+      const q=p.ghosting?old+(to-old)*(to>old?on:off):to;
+      this.charge[i]=q<.0001?0:q>.9999?1:q;
+    }
+    const data=this.image.data,s=this.surface,q=this.charge;
+    for(let i=0,j=0,k=0;i<this.index.length;i++,j+=4,k+=6){
+      const alpha=q[this.index[i]]*this.coverage[i]*this.density;
+      const shadow=this.shadowIndex[i]<0?0:q[this.shadowIndex[i]]*this.shadowCoverage[i]*.105;
+      const diffuse=(1-shadow)*(1-alpha);
+      data[j]=Math.round(255*(s[k]*diffuse+s[k+3]*alpha));
+      data[j+1]=Math.round(255*(s[k+1]*diffuse+s[k+4]*alpha));
+      data[j+2]=Math.round(255*(s[k+2]*diffuse+s[k+5]*alpha));
+    }
+    this.scratchContext.putImageData(this.image,0,0);
+    this.ctx.imageSmoothingEnabled=true;this.ctx.imageSmoothingQuality='high';
+    this.ctx.drawImage(this.scratch,0,0,this.canvas.width,this.canvas.height);this.frames++;
+  }
+  destroy(){this.scratch.width=1;this.scratch.height=1;}
+}
+class LCDRenderer {
+  constructor(canvas, onChange = () => {}, { readback = false } = {}) {
+    this.readback = readback;
+    this.canvas = canvas; this.onChange = onChange; this.backend = null; this.pixels = new Uint32Array(N); this.reason = ''; this.needsUpload = true;
+  }
+  async init(forceCanvas = false) {
+    try { if (forceCanvas) throw new Error('Canvas renderer selected'); this.backend = await GPULCD.create(this.canvas, message => this.fallback(message), this.readback); }
+    catch (e) { this.fallback(e.message); }
+    this.resize(); this.onChange(this.name, this.reason); return this;
+  }
+  fallback(reason) {
+    this.reason = reason; this.backend?.destroy();
+    // A canvas cannot change context type. Replacement also handles partial GPU initialization.
+    const replacement = this.canvas.cloneNode(false); this.canvas.replaceWith(replacement); this.canvas = replacement;
+    this.backend = new CanvasLCD(this.canvas); this.needsUpload = true; this.resize(); this.onChange(this.name, reason);
+  }
+  get name() { return this.backend?.name || 'Starting'; }
+  resize() {
+    const rect = this.canvas.getBoundingClientRect(), dpr = Math.min(3, window.devicePixelRatio || 1);
+    const width = Math.max(W, Math.min(1680, Math.round(rect.width * dpr)));
+    const aspect = rect.height > 0 ? rect.height / rect.width : H / W;
+    const height = Math.max(H, Math.round(width * aspect));
+    if (this.canvas.width !== width || this.canvas.height !== height) { this.canvas.width = width; this.canvas.height = height; }
+    this.needsUpload = true;
+  }
+  upload(pixels) { this.pixels.set(pixels); this.needsUpload = true; }
+  draw(dt, settings) {
+    if (!this.backend) return;
+    try { if (this.needsUpload) { this.backend.upload(this.pixels); this.needsUpload = false; } this.backend.draw(Math.max(dt,.001),settings); }
+    catch (e) { if (this.name === 'WebGPU') this.fallback(e.message); else throw e; }
+  }
+}
+
+
+// ---- storage.js ----
+const KEY = 'snake3310.v1';
+const DEFAULTS = Object.freeze({ level: 4, maze: 0, sound: true, haptics: true, backlight: false, ghosting: true, grid: true, contrast: .94, controls: 'keypad', ambient: 1, angle: 0, reflection: true });
+class GameStorage {
+  constructor(storage = null) {
+    this.storage = storage; this.available = !!storage; this.data = { settings: { ...DEFAULTS }, scores: [], games: 0, session: null };
+    try {
+      const raw = storage?.getItem(KEY); if (!raw) return;
+      const saved = JSON.parse(raw); if (!saved || saved.version !== 1) return;
+      const s = saved.settings || {};
+      for (const key of ['sound','haptics','backlight','ghosting','grid','reflection']) if (typeof s[key] === 'boolean') this.data.settings[key] = s[key];
+      if (Number.isInteger(s.level) && s.level >= 1 && s.level <= 9) this.data.settings.level = s.level;
+      if (Number.isInteger(s.maze) && s.maze >= 0 && s.maze <= 5) this.data.settings.maze = s.maze;
+      if (Number.isFinite(s.contrast) && s.contrast >= .55 && s.contrast <= 1) this.data.settings.contrast = s.contrast;
+      if (['keypad','thumb'].includes(s.controls)) this.data.settings.controls = s.controls;
+      if (Number.isFinite(s.ambient) && s.ambient >= .05 && s.ambient <= 1) this.data.settings.ambient=s.ambient;
+      if (Number.isFinite(s.angle) && s.angle >= -45 && s.angle <= 45) this.data.settings.angle=s.angle;
+      if (Number.isInteger(saved.games) && saved.games >= 0 && saved.games <= 1e9) this.data.games = saved.games;
+      if (Array.isArray(saved.scores)) this.data.scores = saved.scores.filter(x => x && Number.isInteger(x.score) && x.score >= 0 && x.score <= 1e9 && Number.isInteger(x.level) && x.level >= 1 && x.level <= 9 && Number.isInteger(x.maze) && x.maze >= 0 && x.maze <= 5 && Number.isFinite(x.date) && x.date > 0).sort((a,b) => b.score-a.score).slice(0,10).map(x => ({ score:x.score, level:x.level, maze:x.maze, date:x.date }));
+      if (saved.session && typeof saved.session === 'object') this.data.session = saved.session;
+    } catch { this.available = false; }
+  }
+  get best() { return this.data.scores[0]?.score || 0; }
+  save() { try { this.storage?.setItem(KEY, JSON.stringify({ version:1, ...this.data })); } catch { this.available = false; } }
+  saveSettings(settings) { this.data.settings = { ...settings }; this.save(); }
+  saveSession(game) { this.data.session = game && ['running','paused','ready'].includes(game.status) ? game.snapshot() : null; this.save(); }
+  finish(game) {
+    this.data.games++;
+    this.data.scores.push({ score:game.score, level:game.level, maze:game.maze, date:Date.now() });
+    this.data.scores.sort((a,b)=>b.score-a.score || b.date-a.date); this.data.scores.length = Math.min(10,this.data.scores.length);
+    this.data.session = null; this.save();
+  }
+}
+
+
+// ---- audio.js ----
+/** Original synthesized sounds. Audio is only unlocked by a user gesture. */
+class GameAudio {
+  constructor() { this.context = null; this.enabled = true; this.haptics = true; }
+  async unlock() {
+    if (!this.enabled) return;
+    try {
+      if (!this.context) { const C = globalThis.AudioContext || globalThis.webkitAudioContext; if (C) this.context = new C(); }
+      if (this.context && this.context.state === 'suspended') await this.context.resume();
+    } catch { /* Audio is optional; denied autoplay never blocks the game. */ }
+  }
+  tone(frequency, duration = .05, when = 0, volume = .035) {
+    if (!this.enabled || !this.context || this.context.state !== 'running') return;
+    const c = this.context, t = c.currentTime + when, o = c.createOscillator(), gain = c.createGain();
+    o.type='square'; o.frequency.value=frequency; gain.gain.setValueAtTime(0,t); gain.gain.linearRampToValueAtTime(volume,t+.003); gain.gain.exponentialRampToValueAtTime(.0001,t+duration);
+    o.connect(gain); gain.connect(c.destination); o.start(t); o.stop(t+duration+.01);
+    o.onended=()=>{o.disconnect();gain.disconnect();};
+  }
+  vibrate(pattern) { if (this.haptics && typeof navigator.vibrate==='function') { try { navigator.vibrate(pattern); } catch {} } }
+  key() { this.tone(920,.019,0,.012); }
+  play(event) {
+    if (event==='food') { this.tone(1318,.045); this.vibrate(8); }
+    if (event==='bonus') { [1047,1318,1568,2093].forEach((f,i)=>this.tone(f,.065,i*.055)); this.vibrate([14,30,14]); }
+    if (event==='death') { [440,330,220,110].forEach((f,i)=>this.tone(f,.13,i*.095)); this.vibrate([35,45,70]); }
+    if (event==='start') { this.tone(660,.055); this.tone(990,.065,.06); }
+    if (event==='win') { [523,659,784,1047,784,1047].forEach((f,i)=>this.tone(f,.14,i*.12)); this.vibrate([30,50,30,50,80]); }
+  }
+}
+
+
+// ---- app.js ----
+
+
+
+
+
+const $ = selector => document.querySelector(selector);
+let local = null; try { local=window.localStorage; } catch {}
+const store = new GameStorage(local), settings = { ...store.data.settings };
+// Respect reduced motion on a first visit without overwriting an explicit stored preference.
+try { if (!local?.getItem('snake3310.v1') && matchMedia('(prefers-reduced-motion: reduce)').matches) settings.ghosting = false; } catch {}
+const lcd = new LCD(), audio = new GameAudio();
+const state = { screen:'title', game:null, menuIndex:0, selectedLevel:settings.level-1, selectedMaze:settings.maze, helpPage:0, accumulator:0, lastTime:0, settleUntil:0, raf:0, dirty:true, boost:new Set(), finished:false, focus:false, lastSavedTick:0, deathTime:0, wakeLock:null, wakeRequest:0, toastTimer:0, fallbackNotice:false };
+let renderer;
+const hasDialog=()=>!!document.querySelector('dialog[open]');
+const announce = text => { $('#announcer').textContent=text; };
+function toast(text) { const el=$('#toast'); el.textContent=text; el.hidden=false; clearTimeout(state.toastTimer); state.toastTimer=setTimeout(()=>el.hidden=true,2500); }
+function seed() { try { return crypto.getRandomValues(new Uint32Array(1))[0] || 0x3310; } catch { return Date.now()>>>0; } }
+function invalidate() { state.dirty=true; state.settleUntil=performance.now()+1100; if (!state.raf) state.raf=requestAnimationFrame(frame); }
+function menuItems() { return [...(state.game && ['paused','running'].includes(state.game.status)?['Continue']:[]),'New game',`Level: ${settings.level}`,`Maze: ${settings.maze}`,'Top score','Instructions','Settings']; }
+function activeGame() { return state.game && ['running','paused','ready'].includes(state.game.status); }
+
+function draw() {
+  const g=state.game;
+  if (state.screen==='title') lcd.title(store.best,!!activeGame());
+  else if (['playing','paused','gameover'].includes(state.screen) && g) {
+    lcd.drawGame(g);
+    if (state.screen==='paused') lcd.panel('PAUSED',`SCORE ${g.score}`,'PRESS PLAY >');
+    if (state.screen==='gameover') lcd.panel(g.status==='won'?'YOU DID IT!':'GAME OVER',`SCORE ${g.score}`,'PLAY AGAIN >');
+  } else if (state.screen==='menu') lcd.menu('SNAKE II',menuItems(),state.menuIndex);
+  else if (state.screen==='level') lcd.menu('SPEED LEVEL',Array.from({length:9},(_,i)=>`LEVEL ${i+1}${i+1===settings.level?' *':''}`),state.selectedLevel);
+  else if (state.screen==='maze') lcd.menu('CHOOSE MAZE',MAZES.map((m,i)=>`${i} ${m}${i===settings.maze?' *':''}`),state.selectedMaze);
+  else if (state.screen==='scores') {
+    lcd.clear(); lcd.heading('TOP SCORE'); lcd.center(String(store.best).padStart(4,'0'),14,2); lcd.center(`${store.data.games} GAMES PLAYED`,29); lcd.center('BACK >',41);
+  } else if (state.screen==='instructions') {
+    lcd.clear(); lcd.heading(`HOW TO PLAY ${state.helpPage+1}/3`);
+    const pages=[['2 UP  8 DOWN','4 LEFT  6 RIGHT','EAT + AND GROW','DO NOT BITE YOU!'],['EDGES WRAP','MAZE WALLS HURT','EVERY 5: A BONUS','CATCH IT QUICKLY'],['0 PAUSES THE GAME','HOLD 5 FOR BOOST','SWIPE TO STEER','SELECT TO RETURN']];
+    pages[state.helpPage].forEach((s,i)=>lcd.center(s,11+i*8));
+  }
+  renderer?.upload(lcd.pixels);
+  updateHUD();
+}
+function updateHUD() {
+  const g=state.game, active=activeGame();
+  $('#best-score').textContent=String(Math.max(store.best,g?.score||0)).padStart(4,'0');
+  $('#best-caption').textContent=store.best>0?'Your next target. You’ve got this.':'Every legend starts at zero.';
+  $('#level-label').textContent=`${String(active?g.level:settings.level).padStart(2,'0')} / 09`;
+  $('#maze-label').textContent=MAZES[active?g.maze:settings.maze];
+  $('#sound-label').textContent=settings.sound?'On':'Off';
+  let text='Ready when you are', action='Play';
+  if (state.screen==='playing') { text=`${g.score} points · ${g.length} long`; action='Pause'; }
+  else if (state.screen==='paused') { text='Paused. Take your time.'; action='Continue'; }
+  else if (state.screen==='gameover') { text=g.status==='won'?'A full screen. Incredible.':'One more game?'; action='Again'; }
+  else if (state.screen==='title' && active) { text='Your saved game is here.'; action='Continue'; }
+  else if (['menu','level','maze'].includes(state.screen)) { text='Choose with 2 / 8'; action='Select'; }
+  else if (state.screen==='instructions') { text='A little refresher'; action=state.helpPage<2?'Next':'Back'; }
+  else if (state.screen==='scores') { text='Your personal best'; action='Back'; }
+  $('#game-status').replaceChildren(Object.assign(document.createElement('i'),{ariaHidden:'true'}),document.createTextNode(text));
+  $('#softkey-label').textContent=action; $('#select-button').setAttribute('aria-label',`${action} Snake`);
+  $('#start-label').textContent=active?(state.screen==='playing'?'Pause game':'Continue game'):'Let’s play';
+  renderer?.canvas.setAttribute('aria-label',`Snake II. ${text}${g?`. Level ${g.level}, ${MAZES[g.maze]}.`:'.'}`);
+  document.body.dataset.gameState=state.screen;
+}
+function frame(now) {
+  state.raf=0;
+  const elapsed=state.lastTime?now-state.lastTime:16.67; state.lastTime=now;
+  if (state.screen==='playing' && state.game?.status==='running' && !hasDialog()) {
+    if (elapsed>1200) pause('Paused after an interruption.');
+    else {
+      state.accumulator+=Math.min(elapsed,200);
+      const interval=state.game.interval/(state.boost.size?2:1);
+      let ticks=0;
+      while (state.accumulator>=interval && ticks<4 && state.game.status==='running') {
+        state.accumulator-=interval; ticks++;
+        const event=state.game.step(); state.dirty=true; state.settleUntil=now+1100;
+        if (event!=='none') {
+          audio.play(event);
+          if (event==='food'||event==='bonus') {
+            announce(`${event==='bonus'?'Bonus. ':''}${state.game.score} points.`);
+            store.saveSession(state.game); state.lastSavedTick=state.game.ticks;
+          }
+          if (event==='death'||event==='win') finish();
+        }
+      }
+      if (ticks===4) state.accumulator=0;
+    }
+  }
+  if (state.dirty) { draw(); state.dirty=false; }
+  if (now<=state.settleUntil || state.screen==='playing') renderer?.draw(Math.min(elapsed/1000,.1),settings);
+  if (!document.hidden && (state.screen==='playing'||now<state.settleUntil)) state.raf=requestAnimationFrame(frame);
+  else state.lastTime=0;
+}
+async function keepAwake() {
+  if (!navigator.wakeLock || document.hidden || state.game?.status!=='running' || state.wakeLock) return;
+  const request=++state.wakeRequest;
+  try { const lock=await navigator.wakeLock.request('screen'); if (request!==state.wakeRequest||state.game?.status!=='running') { await lock.release(); return; } state.wakeLock=lock; lock.addEventListener('release',()=>{if(state.wakeLock===lock)state.wakeLock=null;}); } catch {}
+}
+function releaseAwake() { state.wakeRequest++; if (state.wakeLock) { state.wakeLock.release().catch(()=>{}); state.wakeLock=null; } }
+function startGame() {
+  closeDialogs();
+  state.game=new SnakeGame({level:settings.level,maze:settings.maze,seed:seed()});
+  state.finished=false; state.accumulator=0; state.lastTime=0; state.boost.clear(); state.lastSavedTick=0;
+  state.game.start(); state.screen='playing'; store.saveSession(state.game);
+  $('#screen-wrap').focus({preventScroll:true});
+  audio.unlock().then(()=>audio.play('start')); keepAwake(); announce(`Game started. Level ${settings.level}. ${MAZES[settings.maze]}.`); invalidate();
+}
+function play() {
+  if (hasDialog()) return;
+  if (activeGame()) {
+    state.game.start(); state.screen='playing'; state.accumulator=0; state.lastTime=0;
+    $('#screen-wrap').focus({preventScroll:true}); audio.unlock(); keepAwake(); announce('Game resumed.'); invalidate();
+  } else startGame();
+}
+function pause(message='Paused.') {
+  if (state.game?.status==='running') {
+    state.game.pause(); state.screen='paused'; state.boost.clear(); state.accumulator=0;
+    store.saveSession(state.game); releaseAwake(); announce(message); invalidate();
+  }
+}
+function togglePause() {
+  if (state.screen==='playing') pause();
+  else if (['title','paused','gameover'].includes(state.screen)) play();
+  else select();
+}
+function finish() {
+  if (state.finished) return; state.finished=true; state.screen='gameover'; state.boost.clear(); state.deathTime=performance.now();
+  const previous=store.best; store.finish(state.game); releaseAwake();
+  announce(`${state.game.status==='won'?'You filled the board!':'Game over.'} Score ${state.game.score}.${state.game.score>previous?' A new personal best!':''}`);
+}
+function openMenu() {
+  if (state.screen==='playing') pause();
+  state.screen='menu'; state.menuIndex=0; audio.key(); invalidate();
+}
+function back() {
+  if (hasDialog()) { document.querySelector('dialog[open]').close(); return; }
+  if (state.screen==='playing'||state.screen==='paused'||state.screen==='gameover'||state.screen==='title') openMenu();
+  else if (state.screen==='menu') { state.screen=activeGame()?'paused':'title'; invalidate(); }
+  else { state.screen='menu'; state.menuIndex=0; invalidate(); }
+}
+function navigate(delta) {
+  if (hasDialog()) return;
+  if (state.screen==='title') { openMenu(); return; }
+  if (state.screen==='menu') state.menuIndex=(state.menuIndex+delta+menuItems().length)%menuItems().length;
+  else if (state.screen==='level') state.selectedLevel=(state.selectedLevel+delta+9)%9;
+  else if (state.screen==='maze') state.selectedMaze=(state.selectedMaze+delta+6)%6;
+  else if (state.screen==='instructions') state.helpPage=(state.helpPage+delta+3)%3;
+  else if (state.screen==='playing') { steer(delta<0?0:2); return; }
+  else { openMenu(); return; }
+  audio.key(); invalidate();
+}
+function select() {
+  if (hasDialog()) return;
+  audio.unlock();
+  if (state.screen==='playing') { pause(); return; }
+  if (['title','paused','gameover'].includes(state.screen)) { play(); return; }
+  if (state.screen==='menu') {
+    const item=menuItems()[state.menuIndex];
+    if (item==='Continue') play();
+    else if (item==='New game') requestNewGame();
+    else if (item.startsWith('Level:')) { state.screen='level'; state.selectedLevel=settings.level-1; }
+    else if (item.startsWith('Maze:')) { state.screen='maze'; state.selectedMaze=settings.maze; }
+    else if (item==='Top score') state.screen='scores';
+    else if (item==='Instructions') { state.screen='instructions'; state.helpPage=0; }
+    else openDialog('settings-dialog');
+  } else if (state.screen==='level') { settings.level=state.selectedLevel+1; applySettings(); state.screen='menu'; }
+  else if (state.screen==='maze') { settings.maze=state.selectedMaze; applySettings(); state.screen='menu'; }
+  else if (state.screen==='instructions' && state.helpPage<2) state.helpPage++;
+  else { state.screen='menu'; state.menuIndex=0; }
+  invalidate();
+}
+function steer(direction) {
+  if (hasDialog()) return;
+  audio.unlock();
+  if (['menu','level','maze','instructions'].includes(state.screen)) { if (direction===0||direction===2) navigate(direction===0?-1:1); else if (direction===1) select(); else back(); return; }
+  if (state.screen==='scores') { back(); return; }
+  if (state.screen==='gameover' && performance.now()-state.deathTime<400) return;
+  if (state.screen!=='playing') play();
+  if (state.game?.queueTurn(direction)) { audio.key(); invalidate(); }
+}
+function requestNewGame() { if (activeGame() && state.game.ticks>0) openDialog('restart-dialog'); else startGame(); }
+function openDialog(id) {
+  pause(); state.boost.clear();
+  if (id==='scores-dialog') renderScores();
+  if (id==='settings-dialog') syncSettingsUI();
+  const dialog=$(`#${id}`); if (!dialog.open) dialog.showModal();
+}
+function closeDialogs() { document.querySelectorAll('dialog[open]').forEach(d=>d.close()); }
+function syncSettingsUI() {
+  $('#level-range').value=settings.level; $('#level-output').value=`${settings.level} / 9`;
+  $('#contrast-range').value=Math.round(settings.contrast*100); $('#contrast-output').value=`${Math.round(settings.contrast*100)}%`;
+  for (const key of ['sound','haptics','backlight','ghosting','grid','reflection']) $(`#${key}-toggle`).checked=settings[key];
+  $('#angle-range').value=settings.angle; $('#angle-output').value=`${settings.angle}°`;
+  $('#ambient-range').value=Math.round(settings.ambient*100); $('#ambient-output').value=`${Math.round(settings.ambient*100)}%`;
+  document.querySelectorAll('[data-lighting]').forEach(button=>{
+    const preset=button.dataset.lighting;
+    const active=preset==='daylight'?!settings.backlight&&settings.ambient===1:preset==='night'?settings.backlight&&settings.ambient===.08:settings.backlight&&settings.ambient===.7;
+    button.setAttribute('aria-pressed',String(active));
+  });
+  document.querySelectorAll('[data-control]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.control===settings.controls)));
+  document.querySelectorAll('[data-maze]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.maze)===settings.maze)));
+}
+function applySettings(save=true) {
+  audio.enabled=settings.sound; audio.haptics=settings.haptics;
+  document.body.dataset.backlight=settings.backlight?'on':'off';
+  document.documentElement.style.setProperty('--case-light',String(.42+.58*Math.sqrt(settings.ambient)));
+  document.body.classList.toggle('thumb-mode',settings.controls==='thumb');
+  $('#control-switch').setAttribute('aria-pressed',String(settings.controls==='thumb'));
+  $('#control-switch').innerHTML=settings.controls==='thumb'?'Classic keypad <span>↗</span>':'Thumb controls <span>↗</span>';
+  $('#sound-button use').setAttribute('href',settings.sound?'#i-sound':'#i-mute');
+  $('#sound-button').setAttribute('aria-label',settings.sound?'Mute sound':'Enable sound');
+  if (save) store.saveSettings(settings);
+  syncSettingsUI(); if (renderer) renderer.resize(); invalidate();
+}
+function toggleSound() { settings.sound=!settings.sound; applySettings(); if(settings.sound)audio.unlock().then(()=>audio.key()); toast(`Sound ${settings.sound?'on':'off'}`); }
+function toggleFocus() {
+  state.focus=!state.focus; document.body.classList.toggle('focus-mode',state.focus);
+  $('#focus-button').setAttribute('aria-pressed',String(state.focus)); $('#focus-button').setAttribute('aria-label',state.focus?'Exit focus mode':'Enter focus mode');
+  renderer?.resize(); invalidate();
+}
+function renderScores() {
+  const list=$('#score-list'); list.replaceChildren();
+  if (!store.data.scores.length) { const p=document.createElement('p'); p.className='score-empty'; p.textContent='No scores yet. Your first game is calling.'; list.append(p); }
+  for (const [i,run] of store.data.scores.entries()) {
+    const row=document.createElement('div'); row.className='score-entry';
+    const rank=document.createElement('span'); rank.className='score-rank'; rank.textContent=String(i+1).padStart(2,'0');
+    const score=document.createElement('span'); score.className='score-value'; score.textContent=String(run.score).padStart(4,'0');
+    const details=document.createElement('span'); details.className='score-details'; details.append(document.createTextNode(`Level ${run.level} · ${MAZES[run.maze]}`),document.createElement('br'),document.createTextNode(new Date(run.date).toLocaleDateString(undefined,{day:'numeric',month:'short'})));
+    row.append(rank,score,details); list.append(row);
+  }
+  $('#total-runs').textContent=`${store.data.games} ${store.data.games===1?'game':'games'} played`;
+}
+function buildMazes() {
+  const root=$('#maze-grid');
+  for (let m=0;m<MAZES.length;m++) {
+    const button=document.createElement('button'); button.className='maze-option'; button.dataset.maze=m;
+    button.setAttribute('aria-label',`Maze ${m}: ${MAZES[m]}`);
+    const cells=createMaze(m), ns='http://www.w3.org/2000/svg';
+    const svg=document.createElementNS(ns,'svg'); svg.setAttribute('viewBox','0 0 28 13'); svg.setAttribute('aria-hidden','true');
+    if (!m) {
+      const path=document.createElementNS(ns,'path'); path.setAttribute('d','M3 6h8v-3h5v6h7v-1h-6v-6h-7v3H3z'); svg.append(path);
+    }
+    for (let i=0;i<cells.length;i++) if(cells[i]) { const r=document.createElementNS(ns,'rect'); r.setAttribute('x',i%28); r.setAttribute('y',Math.floor(i/28)); r.setAttribute('width',1); r.setAttribute('height',1); svg.append(r); }
+    button.append(svg,document.createTextNode(MAZES[m])); button.addEventListener('click',()=>{settings.maze=m;applySettings();}); root.append(button);
+  }
+}
+/** Pointerdown latency, pointer capture, cancellation, and keyboard-generated clicks. */
+function bindPress(button, action, release=null) {
+  const held=new Set();
+  button.addEventListener('pointerdown',e=>{
+    if (e.button!==0) return; e.preventDefault();
+    held.add(e.pointerId); button.classList.add('pressed');
+    try{button.setPointerCapture(e.pointerId);}catch{}
+    action(e.pointerId);
+  });
+  const up=e=>{if(!held.delete(e.pointerId))return; if(!held.size)button.classList.remove('pressed'); release?.(e.pointerId);};
+  for(const name of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(name,up);
+  // Touch-generated click events may report detail=0; only non-pointer clicks are keyboard/AT activation.
+  button.addEventListener('click',e=>{if(e.detail===0&&!e.pointerType){action('keyboard-click');release?.('keyboard-click');}});
+}
+function bindInputs() {
+  document.querySelectorAll('[data-dir]').forEach(button=>bindPress(button,()=>steer(Number(button.dataset.dir))));
+  document.querySelectorAll('[data-boost]').forEach(button=>bindPress(button,id=>{
+    if(hasDialog())return; if(state.screen==='title'||state.screen==='paused')play();
+    if(state.screen==='playing'){state.boost.add(`p${id}`);audio.unlock();invalidate();}
+  },id=>state.boost.delete(`p${id}`)));
+  document.querySelectorAll('[data-nav]').forEach(b=>bindPress(b,()=>navigate(b.dataset.nav==='up'?-1:1)));
+  document.querySelectorAll('[data-action="pause"]').forEach(b=>bindPress(b,togglePause));
+  document.querySelectorAll('[data-key]').forEach(b=>bindPress(b,()=>{
+    const key=b.dataset.key;
+    if(key==='0')togglePause(); else if(key==='*')toggleSound(); else if(key==='#')toggleFocus();
+    else if(key==='3')openDialog('settings-dialog'); else if(key==='7')openDialog('scores-dialog');
+    else if(key==='9'){settings.backlight=!settings.backlight;applySettings();}
+    else if(key==='1'){pause();state.screen='instructions';state.helpPage=0;invalidate();}
+  }));
+  bindPress($('#power-button'),()=>{settings.backlight=!settings.backlight;applySettings();});
+  bindPress($('#select-button'),select); bindPress($('#back-button'),back);
+  $('#new-game-button').addEventListener('click',()=>state.screen==='playing'?pause():play());
+  $('#settings-button').addEventListener('click',()=>openDialog('settings-dialog')); $('#tune-button').addEventListener('click',()=>openDialog('settings-dialog'));
+  $('#sound-button').addEventListener('click',toggleSound); $('#focus-button').addEventListener('click',toggleFocus);
+  $('#scores-button').addEventListener('click',()=>openDialog('scores-dialog')); $('#about-button').addEventListener('click',()=>openDialog('about-dialog'));
+  $('#control-switch').addEventListener('click',()=>{settings.controls=settings.controls==='thumb'?'keypad':'thumb';applySettings();});
+  $('#focus-menu').addEventListener('click',openMenu); $('#leave-focus').addEventListener('click',toggleFocus);
+  $('#confirm-restart').addEventListener('click',startGame);
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
+  document.querySelectorAll('dialog').forEach(d=>{
+    d.addEventListener('click',e=>{if(e.target!==d)return;const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();});
+    d.addEventListener('close',()=>{state.lastTime=0;if(!hasDialog())$('#screen-wrap').focus({preventScroll:true});invalidate();});
+  });
+  $('#fullscreen-button').addEventListener('click',async()=>{
+    closeDialogs();if(!state.focus)toggleFocus();
+    try{if(document.fullscreenElement)await document.exitFullscreen();else if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else toast('Focus mode is ready. Fullscreen isn’t available here.');}catch{toast('Focus mode is ready. Fullscreen was not available.');}
+  });
+  $('#angle-range').addEventListener('input',e=>{settings.angle=Number(e.target.value);applySettings();});
+  $('#ambient-range').addEventListener('input',e=>{settings.ambient=Number(e.target.value)/100;applySettings();});
+  document.querySelectorAll('[data-lighting]').forEach(b=>b.addEventListener('click',()=>{
+    const preset=b.dataset.lighting;
+    settings.backlight=preset!=='daylight';settings.ambient=preset==='daylight'?1:preset==='night'?.08:.7;
+    settings.angle=0;applySettings();
+  }));
+  $('#level-range').addEventListener('input',e=>{settings.level=Number(e.target.value);applySettings();});
+  $('#contrast-range').addEventListener('input',e=>{settings.contrast=Number(e.target.value)/100;applySettings();});
+  for(const key of ['sound','haptics','backlight','ghosting','grid','reflection'])$(`#${key}-toggle`).addEventListener('change',e=>{settings[key]=e.target.checked;applySettings();if(key==='sound'&&settings.sound)audio.unlock();});
+  document.querySelectorAll('[data-control]').forEach(b=>b.addEventListener('click',()=>{settings.controls=b.dataset.control;applySettings();}));
+  const keyDirection={ArrowUp:0,ArrowRight:1,ArrowDown:2,ArrowLeft:3,w:0,d:1,s:2,a:3,'2':0,'6':1,'8':2,'4':3};
+  document.addEventListener('keydown',e=>{
+    if(e.ctrlKey||e.metaKey||e.altKey||e.isComposing||hasDialog())return;
+    if(e.target.closest?.('input,textarea,select,[contenteditable=true]'))return;
+    const key=e.key.length===1?e.key.toLowerCase():e.key;
+    if((key==='Enter'||key===' ')&&e.target.closest?.('button,a'))return;
+    if(keyDirection[key]!==undefined){e.preventDefault();if(!e.repeat)steer(keyDirection[key]);}
+    else if(key==='5'){e.preventDefault();if(!e.repeat){if(state.screen==='title'||state.screen==='paused')play();if(state.screen==='playing')state.boost.add('key5');}}
+    else if(['Enter',' ','Escape','0','p','m','f'].includes(key)){
+      e.preventDefault();if(e.repeat)return;
+      if(key==='Enter')select();else if(key===' '||key==='0'||key==='p')togglePause();else if(key==='Escape')back();else if(key==='m')toggleSound();else toggleFocus();
+    }
+  });
+  document.addEventListener('keyup',e=>{if(e.key==='5')state.boost.delete('key5');});
+  // Continuous swipes support more than one corner without lifting a thumb.
+  let gesture=null;
+  const surface=$('#screen-wrap');
+  surface.addEventListener('pointerdown',e=>{
+    if(e.button!==0||gesture)return;e.preventDefault();surface.focus({preventScroll:true});
+    gesture={id:e.pointerId,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,turned:false,time:performance.now()};
+    try{surface.setPointerCapture(e.pointerId);}catch{}
+  });
+  surface.addEventListener('pointermove',e=>{
+    if(!gesture||e.pointerId!==gesture.id)return;
+    const dx=e.clientX-gesture.x,dy=e.clientY-gesture.y;
+    if(Math.max(Math.abs(dx),Math.abs(dy))<16)return;
+    const direction=Math.abs(dx)>Math.abs(dy)?(dx>0?1:3):(dy>0?2:0);
+    steer(direction);gesture.x=e.clientX;gesture.y=e.clientY;gesture.turned=true;
+  });
+  surface.addEventListener('pointerup',e=>{
+    if(!gesture||e.pointerId!==gesture.id)return;
+    if(!gesture.turned&&Math.hypot(e.clientX-gesture.startX,e.clientY-gesture.startY)<16&&performance.now()-gesture.time<450)togglePause();
+    gesture=null;
+  });
+  for(const name of ['pointercancel','lostpointercapture'])surface.addEventListener(name,()=>gesture=null);
+  surface.addEventListener('contextmenu',e=>e.preventDefault());
+  window.addEventListener('blur',()=>{state.boost.clear();gesture=null;pause('Paused because the window lost focus.');});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){pause('Paused while away.');state.boost.clear();releaseAwake();}else{state.lastTime=0;invalidate();}});
+  window.addEventListener('pagehide',()=>{pause();store.saveSession(state.game);releaseAwake();});
+  window.addEventListener('pageshow',()=>{state.lastTime=0;invalidate();});
+  document.addEventListener('fullscreenchange',()=>{renderer?.resize();invalidate();});
+  window.addEventListener('resize',()=>{renderer?.resize();invalidate();});
+  new ResizeObserver(()=>{renderer?.resize();invalidate();}).observe(surface);
+}
+
+async function initialize() {
+  buildMazes(); bindInputs(); applySettings(false);
+  if(store.data.session){try{state.game=SnakeGame.restore(store.data.session);}catch{store.data.session=null;store.save();}}
+  renderer=new LCDRenderer($('#lcd'),(name,reason)=>{
+    $('#renderer-badge b').textContent=name;
+    $('#renderer-badge').title=reason||'Real WebGPU compute + rendering';
+    $('#renderer-info').textContent=`${name} · 84 × 48 one-bit LCD · reflective optics · 28 × 13 cells${reason?`\n${reason}`:'\nGPU asymmetric response + polarizer, lens, matrix and edge lighting'}`;
+    invalidate();
+  });
+  await renderer.init(new URLSearchParams(location.search).get('renderer')==='canvas');
+  if(!store.available)toast('Browser storage is unavailable. This session still works.');
+  invalidate();
+  // Opt-in, read-only diagnostic hook for reproducible browser validation.
+  if(new URLSearchParams(location.search).has('debug'))Object.defineProperty(window,'__snake',{value:{
+    inspect:()=>({version:'2.0.0',screen:state.screen,renderer:renderer.name,reason:renderer.reason,settings:{...settings},game:state.game?.snapshot(),gameStatus:state.game?.status,turnCount:state.game?.turnCount,boost:state.boost.size,frames:renderer.backend?.frames,finished:state.finished,canvas:{width:renderer.canvas.width,height:renderer.canvas.height}})
+  },configurable:false});
+  if(false&&'serviceWorker'in navigator&&isSecureContext&&location.protocol!=='file:'&&!new URLSearchParams(location.search).has('nosw')){
+    try{await navigator.serviceWorker.register('./sw.js');}catch(error){console.info('Offline caching unavailable:',error.message);}
+  }
+}
+initialize().catch(error=>{
+  console.error(error);announce('Unable to initialize the game.');
+  $('#game-status').textContent='Could not initialize. Reload to try again.';
+  toast(`Could not initialize: ${error.message}`);
+});
+
+
+})();
+</script>
+</body>
+</html>

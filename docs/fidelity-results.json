@@ -1,5 +1,5 @@
 {
-  "fixture": true,
+  "fixture": false,
   "passed": 11,
   "results": [
     {
